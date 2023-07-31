@@ -1,0 +1,51 @@
+
+[tool.flake8]
+    exclude = "build,.git,.tox,./tests/.env,venv"
+    max-line-length = 99
+
+[tool.black]
+    line-length = 99
+    include = '\.pyi?$'
+    exclude = '''
+    /(
+        \.git
+      | python-env
+      | migrations
+      | \.tox
+    )/
+    '''
+
+
+[tool.isort]
+    profile="black"
+    line_length = 99
+    known_django = ["django"]
+    known_pylib = ["dateutil"]
+    known_third_party = ["parler", "wagtail"]
+    known_first_party = ["wagtail_modeladmin_parler"]
+    indent = '    '
+    multi_line_output = 3
+    length_sort = false
+    force_single_line = true
+    default_section = "THIRDPARTY"
+    sections  = ["FUTURE", "STDLIB", "PYLIB", "DJANGO", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+    combine_as_imports = true
+    import_heading_future = "Future imports"
+    import_heading_stdlib = "Standard libs"
+    import_heading_pylib = "Python libs"
+    import_heading_django = "Django imports"
+    import_heading_thirdparty = "Third Party"
+    import_heading_firstparty = "wagtail / parler"
+    import_heading_localfolder = "Local Apps"
+    force_sort_within_sections=true
+
+[tool.djlint]
+    profile = "django"
+    preserve_blank_lines = true
+    format_js = false
+    format_css = true
+
+[tool.pyright]
+    exclude = ["python-env"]
+    venvPath = "."
+    venv = "./python-env"

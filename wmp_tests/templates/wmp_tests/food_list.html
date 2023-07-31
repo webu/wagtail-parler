@@ -1,0 +1,17 @@
+{% extends "wmp_tests/base.html" %}
+{% load i18n %}
+{% block body %}
+<h1>Food list</h1>
+<ul>
+    {% for object in object_list %}
+        <li>
+            <h2><a href="{{ object.get_absolute_url }}">{{ object }}</a> <span>{{ object.yum_rating }}</span></h2>
+            <summary>{{ object.summary }}</summary>
+            {% include "wmp_tests/inc/available_translations.html" %}
+        </li>
+    {% empty %}
+        <li>{% trans "No results" %}</li>
+    {% endfor %}
+
+</ul>
+{% endblock body %}

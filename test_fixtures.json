@@ -1,0 +1,122 @@
+[
+    {
+        "model": "wmp_tests.foodtranslation",
+        "pk": 1,
+        "fields": {
+            "language_code": "fr",
+            "name": "Gelée",
+            "summary": "Summary FR",
+            "content": "Content FR",
+            "master": 1
+        }
+    },
+    {
+        "model": "wmp_tests.foodtranslation",
+        "pk": 2,
+        "fields": {
+            "language_code": "fr",
+            "name": "Pudding de Noël",
+            "summary": "Summary FR",
+            "content": "Content FR",
+            "master": 2
+        }
+    },
+    {
+        "model": "wmp_tests.foodtranslation",
+        "pk": 3,
+        "fields": {
+            "language_code": "fr",
+            "name": "Omelette au fromage",
+            "summary": "Summary FR",
+            "content": "Content FR",
+            "master": 3
+        }
+    },
+    {
+        "model": "wmp_tests.foodtranslation",
+        "pk": 4,
+        "fields": {
+            "language_code": "fr",
+            "name": "Raclette",
+            "summary": "Summary FR",
+            "content": "Content FR",
+            "master": 4
+        }
+    },
+    {
+        "model": "wmp_tests.foodtranslation",
+        "pk": 5,
+        "fields": {
+            "language_code": "en",
+            "name": "Jelly",
+            "summary": "Summary EN",
+            "content": "Content EN",
+            "master": 1
+        }
+    },
+    {
+        "model": "wmp_tests.foodtranslation",
+        "pk": 6,
+        "fields": {
+            "language_code": "en",
+            "name": "Christmas Pudding",
+            "summary": "Summary EN",
+            "content": "Content EN",
+            "master": 2
+        }
+    },
+    {
+        "model": "wmp_tests.food",
+        "pk": 1,
+        "fields": {
+            "yum_rating": 3,
+            "vegetarian": true,
+            "vegan": true
+        }
+    },
+    {
+        "model": "wmp_tests.food",
+        "pk": 2,
+        "fields": {
+            "yum_rating": 5,
+            "vegetarian": false,
+            "vegan": false
+        }
+    },
+    {
+        "model": "wmp_tests.food",
+        "pk": 3,
+        "fields": {
+            "yum_rating": 8,
+            "vegetarian": true,
+            "vegan": false
+        }
+    },
+    {
+        "model": "wmp_tests.food",
+        "pk": 4,
+        "fields": {
+            "yum_rating": 10,
+            "vegetarian": true,
+            "vegan": false
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 1,
+        "fields": {
+            "password": "md5$Xibmtaqa1WGE7j0V46OcOQ$8e5148fef28cc57db487f7a8978cb345",
+            "last_login": "2023-08-02T08:25:40.786Z",
+            "is_superuser": true,
+            "username": "admin",
+            "first_name": "",
+            "last_name": "",
+            "email": "admin@exemple.com",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2023-08-02T06:58:26.271Z",
+            "groups": [],
+            "user_permissions": []
+        }
+    }
+]
