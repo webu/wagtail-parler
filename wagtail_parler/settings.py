@@ -1,9 +1,13 @@
+# Future imports
+from __future__ import annotations
+
 # Standard libs
 import sys
+from typing import Dict
 
 
 class AppSettings:
-    def __init__(self):
+    def __init__(self) -> None:
         # Django imports
         from django.conf import settings
 
@@ -11,7 +15,7 @@ class AppSettings:
         self.__name__ = __name__
 
     @property
-    def HEADINGS_CONF(self):
+    def HEADINGS_CONF(self) -> Dict:
         _translation_status = getattr(self.settings, "WAGTAIL_PARLER_TRANSLATION_STATUS", {}) or {}
         _default_heading = getattr(
             self.settings, "WAGTAIL_PARLER_DEFAULT_TAB_HEADING", "%(locale)s"

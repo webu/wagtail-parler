@@ -2,44 +2,28 @@
 from __future__ import annotations
 
 # Standard libs
-from copy import copy
-from importlib import reload
-import time
 from typing import Dict
-from typing import Iterable
 from typing import List
 from typing import Optional
 from typing import Tuple
 from typing import Union
-from typing import cast
 
-RecusiveListStrOrTuple = List[Union[str, Tuple[str, "RecusiveListStrOrTuple"]]]
 # Django imports
-from django.apps import apps
-from django.conf import settings
-from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.http import HttpResponse
-from django.template import Context
-from django.template import Template
-from django.template.loader import get_template
 from django.test import Client
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.urls import reverse
-from django.utils import translation
-from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
 # Third Party
 from bs4 import BeautifulSoup
-from bs4 import NavigableString
 from bs4 import Tag
+from wagtail_parler_tests.models import Food
 
 __all__ = ["WagtailParlerModelAdminTests", "WagtailParlerSnippetsTests"]
 
-# Third Party
-from wagtail_parler_tests.models import Food
+RecusiveListStrOrTuple = List[Union[str, Tuple[str, "RecusiveListStrOrTuple"]]]
+
 
 EXTRA_SETTINGS = {
     "CUSTOM_TABS_LABELS": dict(
@@ -69,7 +53,7 @@ EXTRA_SETTINGS = {
             ),
             "default": {
                 "fallbacks": ["fr"],
-                "hide_untranslated": False,  # the default; let .active_translations() return fallbacks too.
+                "hide_untranslated": False,
             },
         },
     )
@@ -118,7 +102,7 @@ class WagtailParlerBaseTests:
                 sub_sections = None
             section = container.find("section", id=expected_section_id)
             if not isinstance(section, Tag):
-                raise Exception("section#tab-%s not found" % expected_section_id)
+                raise Exception("section#%s not found" % expected_section_id)
             if sub_sections:
                 self._check_sections(section, sub_sections)
 
@@ -270,17 +254,19 @@ class WagtailParlerBaseTests:
             ("es", "spanish"),
         )
         for locale_code, locale_name in tabs:
+            main_id = f"parler_translations_{locale_code}"
+            childsection = f"panel-child-{main_id}-child-html_content"
             self._check_tab(
                 soup,
-                f"parler_translations_{locale_code}",
+                main_id,
                 [
                     #  panel-child-fr_french-ctranslations_fr_name-section
-                    f"panel-child-parler_translations_{locale_code}-translations_{locale_code}_name-section",
+                    f"panel-child-{main_id}-translations_{locale_code}_name-section",
                     (
-                        f"panel-child-parler_translations_{locale_code}-html_content-section",
+                        f"panel-child-{main_id}-html_content-section",
                         [
-                            f"panel-child-parler_translations_{locale_code}-child-html_content-translations_{locale_code}_summary-section",
-                            f"panel-child-parler_translations_{locale_code}-child-html_content-translations_{locale_code}_content-section",
+                            f"{childsection}-translations_{locale_code}_summary-section",
+                            f"{childsection}-translations_{locale_code}_content-section",
                         ],
                     ),
                 ],

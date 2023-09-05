@@ -1,9 +1,9 @@
 [run]
 source = .
-omit = ./tests/*, ./setup.py
+omit = ./wagtail_parler_tests/*, ./setup.py
 
 [report]
-omit = ./tests/*, ./setup.py
+omit = ./wagtail_parler_tests/*, ./setup.py
 exclude_lines =
     pragma: no cover
     if TYPE_CHECKING:

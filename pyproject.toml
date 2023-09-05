@@ -1,6 +1,5 @@
-
 [tool.flake8]
-    exclude = "build,.git,.tox,./tests/.env,venv"
+    exclude = "build,.git,.tox,./tests/env,./.venv"
     max-line-length = 99
 
 [tool.black]
@@ -12,6 +11,7 @@
       | python-env
       | migrations
       | \.tox
+      | \.venv
     )/
     '''
 
@@ -46,6 +46,6 @@
     format_css = true
 
 [tool.pyright]
-    exclude = ["python-env"]
+    exclude = [".venv"]
     venvPath = "."
-    venv = "./python-env"
+    venv = "./.venv"

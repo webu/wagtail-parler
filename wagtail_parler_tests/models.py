@@ -1,6 +1,3 @@
-# Standard libs
-from typing import List
-
 # Django imports
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -41,9 +38,6 @@ class BaseFood(TranslatableModel):
 
     def __str__(self) -> str:
         return self.safe_translation_getter("name", any_language=True)
-
-    def available_translations(self) -> List[str]:
-        return self.translations.values_list("language_code", flat=True)
 
 
 class Food(BaseFood):
@@ -89,6 +83,18 @@ class FoodWithEditHandler(BaseFood):
     class Meta:
         verbose_name = _("Nourriture - edit_handler but auto translations")
         verbose_name_plural = _("Nourritures - edit_handler but auto translations")
+
+
+class FoodWithEmptyEditHandler(BaseFood):
+    """
+    Because modeladmin can't manage proxy models, we need to duplicate our models to tests
+    """
+
+    translations = TranslatedFields(**BaseFood.translations)
+
+    class Meta:
+        verbose_name = _("Nourriture - edit__handler with empty i18n handlers")
+        verbose_name_plural = _("Nourritures - edit__handler with empty i18n handlers")
 
 
 class FoodWithSpecificEditHandler(BaseFood):

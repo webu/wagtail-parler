@@ -1,12 +1,21 @@
+# Future imports
+from __future__ import annotations
+
+# Standard libs
+from typing import Any
+from typing import Dict
+from typing import Generator
+from typing import Optional
+from typing import Set
+from typing import Tuple
+
 # Django imports
 from django.conf import settings
 from django.db import transaction
+from django.db.models import Model
 from django.forms import Form
 from django.forms.models import ModelForm
 from django.forms.models import fields_for_model
-
-# Third Party
-from parler.models import TranslatableModelMixin
 
 
 class AutoParlerModelForm(Form):
@@ -15,26 +24,26 @@ class AutoParlerModelForm(Form):
     """
 
     # pylint: disable=no-member
-    auto_parler_fields = set()
-    cleaned_data_for_locales = {}
+    auto_parler_fields: Set[str] = set()
+    cleaned_data_for_locales: Dict[str, Any] = {}
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Tuple, **kwargs: Dict) -> None:
         kwargs.setdefault("initial", {})
         self._init_i18n_initials(kwargs.get("instance"), kwargs["initial"])
         self.for_user = kwargs.pop("for_user")
         super().__init__(*args, **kwargs)
         # All fields of others locales than the default one must NOT be required
         for conf in settings.PARLER_LANGUAGES[None][1:]:
-            for _field_name, i18n_field_name in self.get_localized_fieldnames(conf["code"]):
-                self.fields[i18n_field_name].required = False  # type: ignore
-                self.fields[i18n_field_name].label += " (%s)" % conf["code"].upper()  # type: ignore
+            for _fieldname, i18n_fieldname in self.get_localized_fieldnames(conf["code"]):
+                self.fields[i18n_fieldname].required = False  # type: ignore
+                self.fields[i18n_fieldname].label += " (%s)" % conf["code"].upper()  # type: ignore
 
-    def _init_i18n_initials(self, instance, initials):
+    def _init_i18n_initials(self, instance: Model, initials: Dict) -> Optional[Dict]:
         """
         If instance already has translations, populates the initial content of translated fields
         """
         if not instance or not instance.pk:
-            return
+            return None
         for translation in instance.translations.all():
             language_code = translation.language_code
             for field_name, i18n_field_name in self.get_localized_fieldnames(language_code):
@@ -42,7 +51,7 @@ class AutoParlerModelForm(Form):
                     initials[i18n_field_name] = getattr(translation, field_name)
         return initials
 
-    def get_localized_fieldnames(self, locale: str):
+    def get_localized_fieldnames(self, locale: str) -> Generator:
         """
         Generator of (field_name: str, i18n_field_name:str) to get real field_name for
         the translated model and the current form associated field name.
@@ -53,7 +62,7 @@ class AutoParlerModelForm(Form):
             i18n_field_name = "translations_%s_%s" % (locale, field_name)
             yield (field_name, i18n_field_name)
 
-    def _save_locale(self, locale: str):
+    def _save_locale(self, locale: str) -> Tuple:
         """
         Depending sent data, will save/create/delete translation for the given language code
 
@@ -78,7 +87,7 @@ class AutoParlerModelForm(Form):
             ],
         )
 
-    def clean(self):
+    def clean(self) -> Dict:
         """
         Prepare cleaned_data_for_locales of translated fields
         """
@@ -91,7 +100,7 @@ class AutoParlerModelForm(Form):
         return super().clean()  # type: ignore
 
     @transaction.atomic
-    def save(self, *args, **kwargs):
+    def save(self, *args: Tuple, **kwargs: Dict) -> Model:
         """
         Save the instance and it's translations
         """
@@ -102,8 +111,11 @@ class AutoParlerModelForm(Form):
 
 
 def build_translations_form(
-    model, main_form_meta_attrs=None, fields_for_model_kwargs=None, base_form=None
-):
+    model: Model,
+    main_form_meta_attrs: Optional[Dict] = None,
+    fields_for_model_kwargs: Optional[Dict] = None,
+    base_form: Optional[ModelForm] = None,
+) -> ModelForm:
     """
     Build a model form with support of translable fields which are auto added to the form
     """
@@ -126,6 +138,6 @@ def build_translations_form(
     fields_for_model_kwargs["model"] = i18n_model
     for conf in settings.PARLER_LANGUAGES[None]:
         for field_name, field in fields_for_model(**fields_for_model_kwargs).items():
-            attrs["auto_parler_fields"].add(field_name)
+            attrs["auto_parler_fields"].add(field_name)  # type: ignore
             attrs["translations_%s_%s" % (conf["code"], field_name)] = field
     return type("%sForm" % model.__name__, (AutoParlerModelForm, base_form), attrs)

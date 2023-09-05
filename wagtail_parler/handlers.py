@@ -1,9 +1,21 @@
+# Future imports
+from __future__ import annotations
+
 # Standard libs
 from copy import deepcopy
-import logging
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from typing import Dict
+    from typing import List
+    from typing import Optional
+    from typing import Set
+    from typing import Tuple
+    from wagtail.admin.panels import Panel
 
 # Django imports
 from django.conf import settings
+from django.db.models import Model
 from django.forms.models import fields_for_model
 from django.utils.translation import gettext_lazy as _
 
@@ -12,21 +24,17 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.admin.panels import ObjectList
 from wagtail.admin.panels import TabbedInterface
 from wagtail.contrib.modeladmin.options import ModelAdmin
-from wagtail.contrib.modeladmin.views import ModelFormView
 from wagtail.snippets.views.snippets import SnippetViewSet
 
 # wagtail / parler
-from wagtail_parler import settings as wagtail_parler_settings
+from wagtail_parler import settings as wp_settings
 
 # Local Apps
 from .forms import build_translations_form
 
 
 class TranslationsList(ObjectList):
-    current_parler_language = None
-    initial_parler_heading = None
-
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Tuple, **kwargs: Dict):
         self.current_parler_language = kwargs.pop("current_parler_language", None)
         self.initial_parler_heading = kwargs.pop(
             "initial_parler_heading", kwargs.pop("heading", None)
@@ -34,29 +42,18 @@ class TranslationsList(ObjectList):
         super().__init__(*args, **kwargs)
 
     @property
-    def clean_name(self):
-        """
-        A name for this panel, consisting only of ASCII alphanumerics and underscores, suitable for use in identifiers.
-        Usually generated from the panel heading. Note that this is not guaranteed to be unique or non-empty; anything
-        making use of this and requiring uniqueness should validate and modify the return value as needed.
-        """
-        if self.current_parler_language:
-            return "parler_translations_%s" % self.current_parler_language
-        return "parler_translations_all"
+    def clean_name(self) -> str:
+        return "parler_translations_%s" % (self.current_parler_language or "all")
 
-    def _set_parler_heading(self, instance):
+    def _set_parler_heading(self, instance: Model) -> None:
         current_parler_language = getattr(self, "current_parler_language", None)
-        if not current_parler_language:
-            return
-        conf = None
-        for conf in settings.PARLER_LANGUAGES[None]:
-            if conf["code"] == current_parler_language:
-                break
-        if not conf or conf["code"] != current_parler_language:
-            return
-        handler = self
+        conf = next(
+            conf
+            for conf in settings.PARLER_LANGUAGES[None]
+            if conf["code"] == current_parler_language
+        )
         locale_labels = dict(settings.LANGUAGES)
-        headings_conf = wagtail_parler_settings.HEADINGS_CONF  # type: ignore  pylint: disable=no-member
+        headings_conf = wp_settings.HEADINGS_CONF  # type: ignore
         if instance and instance.pk:
             if not instance.has_translation(conf["code"]):
                 conf_heading = headings_conf["untranslated"]
@@ -67,21 +64,23 @@ class TranslationsList(ObjectList):
         heading = self.initial_parler_heading
         if not heading or "%(" not in heading:
             heading = conf_heading["label"]
-        if "%(" in heading:
-            heading = heading % {
+        if "%(" in heading:  # type: ignore
+            heading = heading % {  # type: ignore
                 "locale": locale_labels[conf["code"]],
                 "status": conf_heading["status"],
                 **conf,
             }
         self.heading = heading
 
-    def clone_kwargs(self):
+    def clone_kwargs(self) -> Dict:
         kwargs = super().clone_kwargs()
         kwargs["current_parler_language"] = getattr(self, "current_parler_language", None)
         kwargs["initial_parler_heading"] = getattr(self, "initial_parler_heading", self.heading)
         return kwargs
 
-    def get_bound_panel(self, instance=None, *args, **kwargs):
+    def get_bound_panel(
+        self, instance: Model = None, *args: Tuple, **kwargs: Dict
+    ) -> ObjectList.BoundPanel:
         self._set_parler_heading(instance)
         return super().get_bound_panel(instance, *args, **kwargs)
 
@@ -91,7 +90,9 @@ class ParlerAdminWagtailMixin:
     Mixin to manage translations via Parler inside a ModelAdmin or SnippetViewSet
     """
 
-    def _set_translations_handlers(self: ModelAdmin, handlers, base_handler=None):
+    def _set_translations_handlers(
+        self: ModelAdmin, handlers: List, base_handler: Optional[TranslationsList] = None
+    ) -> Set[str]:
         """
         Build handler for each locale and add it to `handlers` list
         base_handler can be used as a template : all it's children which are FieldPanel
@@ -109,13 +110,13 @@ class ParlerAdminWagtailMixin:
                     children.append(FieldPanel(field_name))
             if not base_handler:
                 base_handler = TranslationsList(
-                    heading="",
-                    children=children,
+                    heading="",  # type: ignore
+                    children=children,  # type: ignore
                 )
             else:
                 base_handler.children = children
 
-        def recurse_child_replace(handler, locale):
+        def recurse_child_replace(handler: Panel, locale: str) -> None:
             children = getattr(handler, "children", None)
             if not children:
                 return
@@ -134,13 +135,13 @@ class ParlerAdminWagtailMixin:
             handlers.append(handler)
         return displayed_fields
 
-    def get_edit_handler(self: ModelAdmin):
+    def get_edit_handler(self: ModelAdmin) -> TabbedInterface:
         """
         Prepare real handlers to be used with this Model Admin.
         """
-        base_handlers = super().get_edit_handler()
+        base_handlers = super().get_edit_handler()  # type: ignore
         displayed_fields = None
-        handlers = []
+        handlers: List = []
         for handler in base_handlers.children:
             if isinstance(handler, TranslationsList):
                 displayed_fields = self._set_translations_handlers(handlers, base_handler=handler)
@@ -167,5 +168,5 @@ class ParlerModelAdminMixin(ParlerAdminWagtailMixin):
 
 
 class ParlerSnippetAdminMixin(ParlerAdminWagtailMixin):
-    def get_edit_handler(self: SnippetViewSet):
+    def get_edit_handler(self: SnippetViewSet) -> TabbedInterface:
         return super().get_edit_handler().bind_to_model(self.model)

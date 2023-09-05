@@ -1,11 +1,11 @@
 {% load i18n %}
 <p class="available_translations">
-    {% if not object.available_translations %}
+    {% if not object.get_available_languages %}
         {% trans "No other translations exists." %}
     {% else %}
         {% trans "This item also exists in:" %}
         <nav>
-            {% for lang in object.available_translations %}
+            {% for lang in object.get_available_languages %}
                 <span>{{ lang }}</span>
             {% endfor %}
         </nav>

@@ -7,13 +7,7 @@ from django.urls import path
 from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 
-# Local Apps
-from .views import FoodDetailView
-from .views import FoodListView
-
 urlpatterns = i18n_patterns(
     path("cms/", include(wagtailadmin_urls)),
-    path("food/", FoodListView.as_view(), name="food_list"),
-    path("food/<int:pk>/", FoodDetailView.as_view(), name="food_detail"),
     path("", include(wagtail_urls)),
 )

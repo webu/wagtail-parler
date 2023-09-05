@@ -14,14 +14,14 @@ import sys
 # Django imports
 import django
 
+# Third Party
+# wagtail / parler
+from wagtail_parler import __version__ as wagtail_parler_version
+
 sys.path.insert(0, os.path.abspath("../.."))
 os.environ["DJANGO_SETTINGS_MODULE"] = "tests.settings"
 django.setup()
 
-
-# Third Party
-# wagtail / parler
-from wagtail_parler import __version__ as wagtail_parler_version
 
 project = "Wagtail Parler"
 copyright = "2023, Webu"
