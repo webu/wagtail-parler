@@ -12,6 +12,8 @@ if TYPE_CHECKING:
     from typing import Set
     from typing import Tuple
     from wagtail.admin.panels import Panel
+    from wagtail.contrib.modeladmin.options import ModelAdmin
+    from wagtail.snippets.views.snippets import SnippetViewSet
 
 # Django imports
 from django.conf import settings
@@ -23,13 +25,12 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
 from wagtail.admin.panels import ObjectList
 from wagtail.admin.panels import TabbedInterface
-from wagtail.contrib.modeladmin.options import ModelAdmin
-from wagtail.snippets.views.snippets import SnippetViewSet
 
 # wagtail / parler
 from wagtail_parler import settings as wp_settings
 
 # Local Apps
+from .compat import CompatibleSnippetViewSetMixin
 from .forms import build_translations_form
 
 
@@ -117,10 +118,7 @@ class ParlerAdminWagtailMixin:
                 base_handler.children = children
 
         def recurse_child_replace(handler: Panel, locale: str) -> None:
-            children = getattr(handler, "children", None)
-            if not children:
-                return
-            for child in children:
+            for child in handler.children:
                 if isinstance(child, FieldPanel) and child.field_name in translated_fields:
                     displayed_fields.add(child.field_name)
                     child.field_name = "translations_%s_%s" % (locale, child.field_name)
@@ -167,6 +165,6 @@ class ParlerModelAdminMixin(ParlerAdminWagtailMixin):
     pass
 
 
-class ParlerSnippetAdminMixin(ParlerAdminWagtailMixin):
+class ParlerSnippetAdminMixin(ParlerAdminWagtailMixin, CompatibleSnippetViewSetMixin):
     def get_edit_handler(self: SnippetViewSet) -> TabbedInterface:
         return super().get_edit_handler().bind_to_model(self.model)

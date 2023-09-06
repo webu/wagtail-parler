@@ -2,17 +2,20 @@
 from __future__ import annotations
 
 # Standard libs
-from typing import Any
-from typing import Dict
-from typing import Generator
-from typing import Optional
-from typing import Set
-from typing import Tuple
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from typing import Any
+    from typing import Dict
+    from typing import Generator
+    from typing import Optional
+    from typing import Set
+    from typing import Tuple
+    from django.db.models import Model
 
 # Django imports
 from django.conf import settings
 from django.db import transaction
-from django.db.models import Model
 from django.forms import Form
 from django.forms.models import ModelForm
 from django.forms.models import fields_for_model

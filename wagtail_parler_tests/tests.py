@@ -17,6 +17,7 @@ from django.utils.translation import gettext_lazy as _
 
 # Third Party
 from bs4 import BeautifulSoup
+from bs4 import NavigableString
 from bs4 import Tag
 from wagtail_parler_tests.models import Food
 
@@ -75,7 +76,15 @@ class WagtailParlerBaseTests:
         assert isinstance(tabs_list, Tag)
         tabs = tabs_list.find_all("a")
         self.assertEqual(len(tabs), len(expected_tabs))
-        texts = [next(tab.children).string.strip() for tab in tabs]
+        texts = []
+        # could be shorter with texts = [next(tab.children).string.strip() for tab in tabs]
+        # but wagtail < 4.2 add errors BEFORE the string :(
+        for tab in tabs:
+            text = ""
+            for child in tab.children:
+                if isinstance(child, NavigableString) and child.text.strip():
+                    text += child.text.strip()
+            texts.append(text)
         self.assertEqual(texts, expected_tabs)
 
     def _check_tab(

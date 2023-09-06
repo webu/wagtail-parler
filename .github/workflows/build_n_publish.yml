@@ -1,0 +1,42 @@
+name: Publish Python 🐍 distributions 📦 to PyPI
+
+on:
+  push:
+    tags:
+      - '*'
+
+
+jobs:
+  build-n-publish:
+    name: Build and publish Python 🐍 distributions 📦 to PyPI
+    runs-on: ubuntu-latest
+    environment:
+      name: release
+      url: https://pypi.org/p/wagtail-parler
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.x"
+    - name: Install pypa/build
+      run: >-
+        python3 -m
+        pip install
+        build
+        --user
+    - name: Build a binary wheel and a source tarball
+      run: >-
+        python3 -m
+        build
+        --sdist
+        --wheel
+        --outdir dist/
+        .
+    - name: Publish package distributions to PyPi
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        user: __token__
+        password: ${{ secrets.PYPI_API_TOKEN }}
