@@ -5,8 +5,14 @@ from django.utils.translation import gettext_lazy as _
 # Third Party
 from parler.models import TranslatableModel
 from parler.models import TranslatedFields
+from wagtail import blocks
 from wagtail.admin.panels import FieldPanel
 from wagtail.admin.panels import ObjectList
+from wagtail.fields import StreamField
+
+
+class QABlock(blocks.StructBlock):
+    text = blocks.TextBlock(label="Question")
 
 
 class BaseFood(TranslatableModel):
@@ -29,6 +35,16 @@ class BaseFood(TranslatableModel):
         "name": models.CharField(_("Nom"), max_length=255, blank=False, null=False),
         "summary": models.TextField(_("Résumé"), blank=False, null=False),
         "content": models.TextField(_("Contenu"), blank=False, null=False),
+        "qa": StreamField(
+            [
+                ("QaBlock", QABlock(label="QA")),
+            ],
+            verbose_name=_("Some QA"),
+            blank=True,
+            null=True,
+            collapsed=True,
+            use_json_field=True,
+        ),
     }
 
     class Meta:

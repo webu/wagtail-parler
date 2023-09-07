@@ -26,8 +26,8 @@ wagtail's snippets.
 This app is tested to runs with:
 
 * Django 3.2, 4.2
-* Wagtail TODO
-* Parler TODO
+* Wagtail 4.1, 4.2, 5.0, 5.1
+* Parler 2.3 (probably older ones to, it's just not tested)
 * Python 3.7, 3.9, 3.11
 
 To ensure code quality and consistency:

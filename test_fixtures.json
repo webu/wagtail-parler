@@ -1,122 +1,164 @@
 [
-    {
-        "model": "wagtail_parler_tests.foodtranslation",
-        "pk": 1,
-        "fields": {
-            "language_code": "fr",
-            "name": "Gelée",
-            "summary": "Summary FR",
-            "content": "Content FR",
-            "master": 1
-        }
-    },
-    {
-        "model": "wagtail_parler_tests.foodtranslation",
-        "pk": 2,
-        "fields": {
-            "language_code": "fr",
-            "name": "Pudding de Noël",
-            "summary": "Summary FR",
-            "content": "Content FR",
-            "master": 2
-        }
-    },
-    {
-        "model": "wagtail_parler_tests.foodtranslation",
-        "pk": 3,
-        "fields": {
-            "language_code": "fr",
-            "name": "Omelette au fromage",
-            "summary": "Summary FR",
-            "content": "Content FR",
-            "master": 3
-        }
-    },
-    {
-        "model": "wagtail_parler_tests.foodtranslation",
-        "pk": 4,
-        "fields": {
-            "language_code": "fr",
-            "name": "Raclette",
-            "summary": "Summary FR",
-            "content": "Content FR",
-            "master": 4
-        }
-    },
-    {
-        "model": "wagtail_parler_tests.foodtranslation",
-        "pk": 5,
-        "fields": {
-            "language_code": "en",
-            "name": "Jelly",
-            "summary": "Summary EN",
-            "content": "Content EN",
-            "master": 1
-        }
-    },
-    {
-        "model": "wagtail_parler_tests.foodtranslation",
-        "pk": 6,
-        "fields": {
-            "language_code": "en",
-            "name": "Christmas Pudding",
-            "summary": "Summary EN",
-            "content": "Content EN",
-            "master": 2
-        }
-    },
-    {
-        "model": "wagtail_parler_tests.food",
-        "pk": 1,
-        "fields": {
-            "yum_rating": 3,
-            "vegetarian": true,
-            "vegan": true
-        }
-    },
-    {
-        "model": "wagtail_parler_tests.food",
-        "pk": 2,
-        "fields": {
-            "yum_rating": 5,
-            "vegetarian": false,
-            "vegan": false
-        }
-    },
-    {
-        "model": "wagtail_parler_tests.food",
-        "pk": 3,
-        "fields": {
-            "yum_rating": 8,
-            "vegetarian": true,
-            "vegan": false
-        }
-    },
-    {
-        "model": "wagtail_parler_tests.food",
-        "pk": 4,
-        "fields": {
-            "yum_rating": 10,
-            "vegetarian": true,
-            "vegan": false
-        }
-    },
-    {
-        "model": "auth.user",
-        "pk": 1,
-        "fields": {
-            "password": "md5$Xibmtaqa1WGE7j0V46OcOQ$8e5148fef28cc57db487f7a8978cb345",
-            "last_login": "2023-08-02T08:25:40.786Z",
-            "is_superuser": true,
-            "username": "admin",
-            "first_name": "",
-            "last_name": "",
-            "email": "admin@exemple.com",
-            "is_staff": true,
-            "is_active": true,
-            "date_joined": "2023-08-02T06:58:26.271Z",
-            "groups": [],
-            "user_permissions": []
-        }
+{
+    "model": "wagtail_parler_tests.foodtranslation",
+    "pk": 1,
+    "fields": {
+        "language_code": "fr",
+        "name": "Gelée",
+        "summary": "Summary FR",
+        "content": "Content FR",
+        "qa": "[{\"type\": \"QaBlock\", \"value\": {\"text\": \"Pouvez-vous emmener une \\u00ab Jelly \\u00bb dans un avion ?\"}, \"id\": \"8c23eadb-60e0-4271-831d-332dd33ce36b\"}]",
+        "master": 1
     }
+},
+{
+    "model": "wagtail_parler_tests.foodtranslation",
+    "pk": 2,
+    "fields": {
+        "language_code": "fr",
+        "name": "Pudding de Noël",
+        "summary": "Summary FR",
+        "content": "Content FR",
+        "qa": "[{\"type\": \"QaBlock\", \"value\": {\"text\": \"De quelle origine est ce plat ?\"}, \"id\": \"6b40015d-0cd9-48b4-8a06-3719cd6bce60\"}]",
+        "master": 2
+    }
+},
+{
+    "model": "wagtail_parler_tests.foodtranslation",
+    "pk": 3,
+    "fields": {
+        "language_code": "fr",
+        "name": "Omelette au fromage",
+        "summary": "Summary FR",
+        "content": "Content FR",
+        "qa": "[{\"type\": \"QaBlock\", \"value\": {\"text\": \"De quelle s\\u00e9rie parle t-on de \\\"Omelette du fromage\\\"\"}, \"id\": \"05aeb9c2-b6e3-42cb-ac6b-195f93885af4\"}]",
+        "master": 3
+    }
+},
+{
+    "model": "wagtail_parler_tests.foodtranslation",
+    "pk": 4,
+    "fields": {
+        "language_code": "fr",
+        "name": "Raclette",
+        "summary": "Summary FR",
+        "content": "Content FR",
+        "qa": "[{\"type\": \"QaBlock\", \"value\": {\"text\": \"Est-ce di\\u00e9t\\u00e9tique ?\"}, \"id\": \"a414bab0-97e9-4e3d-9ef1-5f2b2d165ece\"}]",
+        "master": 4
+    }
+},
+{
+    "model": "wagtail_parler_tests.foodtranslation",
+    "pk": 5,
+    "fields": {
+        "language_code": "en",
+        "name": "Jelly",
+        "summary": "Summary EN",
+        "content": "Content EN",
+        "qa": "[{\"type\": \"QaBlock\", \"value\": {\"text\": \"Can you bring a Jelly in a plane ?\"}, \"id\": \"bbc8985f-f249-4ce2-9cab-cee966ffb4aa\"}]",
+        "master": 1
+    }
+},
+{
+    "model": "wagtail_parler_tests.foodtranslation",
+    "pk": 6,
+    "fields": {
+        "language_code": "en",
+        "name": "Christmas Pudding",
+        "summary": "Summary EN",
+        "content": "Content EN",
+        "qa": "[{\"type\": \"QaBlock\", \"value\": {\"text\": \"What is the origin of this meal ?\"}, \"id\": \"a2a0a74c-7817-4129-a6d5-490c5af3afe9\"}]",
+        "master": 2
+    }
+},
+{
+    "model": "wagtail_parler_tests.food",
+    "pk": 1,
+    "fields": {
+        "yum_rating": 3,
+        "vegetarian": true,
+        "vegan": true
+    }
+},
+{
+    "model": "wagtail_parler_tests.food",
+    "pk": 2,
+    "fields": {
+        "yum_rating": 5,
+        "vegetarian": false,
+        "vegan": false
+    }
+},
+{
+    "model": "wagtail_parler_tests.food",
+    "pk": 3,
+    "fields": {
+        "yum_rating": 8,
+        "vegetarian": true,
+        "vegan": false
+    }
+},
+{
+    "model": "wagtail_parler_tests.food",
+    "pk": 4,
+    "fields": {
+        "yum_rating": 10,
+        "vegetarian": true,
+        "vegan": false
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+        "password": "md5$Xibmtaqa1WGE7j0V46OcOQ$8e5148fef28cc57db487f7a8978cb345",
+        "last_login": "2023-09-12T07:47:24.764Z",
+        "is_superuser": true,
+        "username": "admin",
+        "first_name": "",
+        "last_name": "",
+        "email": "admin@exemple.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2023-08-02T06:58:26.271Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+        "name": "Moderators",
+        "permissions": [
+            1,
+            2,
+            3,
+            5,
+            4,
+            6,
+            7,
+            9,
+            8
+        ]
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+        "name": "Editors",
+        "permissions": [
+            1,
+            2,
+            3,
+            5,
+            4,
+            6,
+            7,
+            9,
+            8
+        ]
+    }
+}
 ]

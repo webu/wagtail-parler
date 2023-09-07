@@ -308,10 +308,30 @@ class WagtailParlerBaseTests:
             "translations_fr_name": "Gelée",
             "translations_fr_summary": "Summary FR",
             "translations_fr_content": "Content FR",
+            "translations_fr_qa-count": 1,
+            "translations_fr_qa-0-deleted": "",
+            "translations_fr_qa-0-order": 0,
+            "translations_fr_qa-0-type": "QaBlock",
+            "translations_fr_qa-0-id": "8c23eadb-60e0-4271-831d-332dd33ce36b",
+            "translations_fr_qa-0-value-text": "Pouvez-vous emmener une « Jelly » dans un avion ?",
+            # EN
             "translations_en_name": "Jelly",
             "translations_en_summary": "Summary EN",
             "translations_en_content": "Content EN",
+            "translations_en_qa-count": 1,
+            "translations_en_qa-0-deleted": "",
+            "translations_en_qa-0-order": 0,
+            "translations_en_qa-0-type": "QaBlock",
+            "translations_en_qa-0-id": "bbc8985f-f249-4ce2-9cab-cee966ffb4aa",
+            "translations_en_qa-0-value-text": "Can you bring a Jelly in a plane ?",
+            # ES
             "translations_es_name": "Jelly ES",
+            "translations_es_qa-count": 1,
+            "translations_es_qa-0-deleted": "",
+            "translations_es_qa-0-order": 0,
+            "translations_es_qa-0-type": "QaBlock",
+            "translations_es_qa-0-id": "d2d0ab62-6946-4764-947a-77f58ebfd7ae",
+            "translations_es_qa-0-value-text": "QA ES",
         }
         resp = self.client.post(edit_url, data)
         self.assertEqual(resp.status_code, 302)
@@ -319,6 +339,10 @@ class WagtailParlerBaseTests:
         jelly = Food.objects.get(pk=1)
         self.assertIn("es", jelly.get_available_languages())
         self.assertEqual(jelly.get_translation("es").name, "Jelly ES")
+        self.assertEqual(
+            jelly.get_translation("es").qa.raw_data[0]["value"]["text"],
+            "QA ES",
+        )
 
     def test_update_translations(self: TestCase) -> None:
         """checks we can update existing translations for an instance"""
@@ -334,15 +358,34 @@ class WagtailParlerBaseTests:
             "translations_fr_name": "Gelée",
             "translations_fr_summary": "Summary FR",
             "translations_fr_content": "Content FR",
+            "translations_fr_qa-count": 1,
+            "translations_fr_qa-0-deleted": "",
+            "translations_fr_qa-0-order": 0,
+            "translations_fr_qa-0-type": "QaBlock",
+            "translations_fr_qa-0-id": "8c23eadb-60e0-4271-831d-332dd33ce36b",
+            "translations_fr_qa-0-value-text": "Pouvez-vous emmener une « Jelly » dans un avion ?",
+            # EN
             "translations_en_name": "Jelly updated",
             "translations_en_summary": "Summary EN",
             "translations_en_content": "Content EN",
+            "translations_en_qa-count": 1,
+            "translations_en_qa-0-deleted": "",
+            "translations_en_qa-0-order": 0,
+            "translations_en_qa-0-type": "QaBlock",
+            "translations_en_qa-0-id": "bbc8985f-f249-4ce2-9cab-cee966ffb4aa",
+            "translations_en_qa-0-value-text": "Can you bring a Jelly in a plane ? Updated",
+            # ES
+            "translations_es_qa-count": 0,
         }
         resp = self.client.post(edit_url, data)
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(resp.url, list_url)
         jelly = Food.objects.get(pk=1)
         self.assertEqual(jelly.get_translation("en").name, "Jelly updated")
+        self.assertEqual(
+            jelly.get_translation("en").qa.raw_data[0]["value"]["text"],
+            "Can you bring a Jelly in a plane ? Updated",
+        )
         self.assertNotIn("es", jelly.get_available_languages())
 
     def test_delete_translations(self: TestCase) -> None:
@@ -359,6 +402,9 @@ class WagtailParlerBaseTests:
             "translations_fr_name": "Gelée",
             "translations_fr_summary": "Summary FR",
             "translations_fr_content": "Content FR",
+            "translations_fr_qa-count": 0,
+            "translations_en_qa-count": 0,
+            "translations_es_qa-count": 0,
         }
         resp = self.client.post(edit_url, data)
         self.assertEqual(resp.status_code, 302)
