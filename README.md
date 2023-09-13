@@ -104,7 +104,7 @@ modeladmin_register(FoodAdmin)
 
 ## Extra 🧀🐦
 
-More advanced usage, tests, etc., are documented [in the doc](https://readthedocs.org/projects/wagtail-parler/badge/?version=latest).
+More advanced usage, tests, etc., are documented [in the doc](https://wagtail-parler.readthedocs.io/).
 
 > Maître [Wagtail][wagtail], sur un arbre perché,  
 > Tenait en son bec une omelette du fromage.  

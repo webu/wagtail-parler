@@ -1,8 +1,8 @@
-# Wagtail Parler
-
+```{include} presentation.md
+```
 ```{toctree}
 :maxdepth: 2
-wagtail_parler
+presentation
 configuration
 usage
 ```

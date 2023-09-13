@@ -9,7 +9,6 @@
 
 # Standard libs
 import os
-import sys
 
 # Django imports
 import django
@@ -18,8 +17,7 @@ import django
 # wagtail / parler
 from wagtail_parler import __version__ as wagtail_parler_version
 
-sys.path.insert(0, os.path.abspath("../.."))
-os.environ["DJANGO_SETTINGS_MODULE"] = "tests.settings"
+os.environ["DJANGO_SETTINGS_MODULE"] = "wagtail_parler_tests.settings"
 django.setup()
 
 
