@@ -89,6 +89,8 @@ class TranslationsList(ObjectList):
 class ParlerAdminWagtailMixin:
     """
     Mixin to manage translations via Parler inside a ModelAdmin or SnippetViewSet
+
+    You **SHOULD NOT** use this Mixin directly but ParlerModelAdminMixin or ParlerSnippetAdminMixin
     """
 
     def _set_translations_handlers(
@@ -162,9 +164,68 @@ class ParlerAdminWagtailMixin:
 
 
 class ParlerModelAdminMixin(ParlerAdminWagtailMixin):
-    pass
+    """
+    Mixin to use with ModelAdmin to manage parler translations.
+    ex:
+
+    .. code-block:: python
+
+        class SomeModelAdmin(ParlerModelAdminMixin, ModelAdmin):
+            model = SomeModel
+
+
+        class FoodModelAdmin(ParlerModelAdminMixin, ModelAdmin):
+            model = Food
+            edit_handler = ObjectList(
+                children=[
+                    FieldPanel("yum_rating"),
+                    TranslationsList(
+                        heading="%(code)s: %(locale)s %(status)s",  # type: ignore
+                        # let children empty, it will be auto populated
+                    ),
+                    ObjectList(
+                        heading=_("Régime"),
+                        children=[FieldPanel("vegetarian"), FieldPanel("vegan")]
+                    ),
+                ],
+            )
+    """
 
 
 class ParlerSnippetAdminMixin(ParlerAdminWagtailMixin, CompatibleSnippetViewSetMixin):
+    """
+    Mixin to use with SnippetViewSet to manage parler translations.
+
+    If no edit_handler are defined, the default behaviour will create an unstranlated data tab
+    then a tab for each language
+    You can specify your edit_handler to have more control over how form is built.
+    TranslationsList will be duplicated for each language and populated with
+    translations fields if no children are given. Of course, you can also configure
+    fields manually
+    ex:
+
+    .. code-block:: python
+
+        class SomeModelAdminSnippet(ParlerSnippetAdminMixin, SnippetViewSet):
+            model = SomeModel
+
+
+        class FoodAdminSnippet(ParlerSnippetAdminMixin, SnippetViewSet):
+            model = Food
+            edit_handler = ObjectList(
+                children=[
+                    FieldPanel("yum_rating"),
+                    TranslationsList(
+                        heading="%(code)s: %(locale)s %(status)s",
+                        # let children empty, it will be auto populated
+                    ),
+                    ObjectList(
+                        heading=_("Régime"),
+                        children=[FieldPanel("vegetarian"), FieldPanel("vegan")]
+                    ),
+                ],
+            )
+    """
+
     def get_edit_handler(self: SnippetViewSet) -> TabbedInterface:
         return super().get_edit_handler().bind_to_model(self.model)

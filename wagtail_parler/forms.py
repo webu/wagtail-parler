@@ -69,15 +69,19 @@ class AutoParlerModelForm(Form):
         """
         Depending sent data, will save/create/delete translation for the given language code
 
-        param: locale: str: locale code of translation to save/create/delete
-        return: (None|True|False, int|instance|[instances]:
-            for deletion, will return None and the number of translations deleted
-            for creation, will return True and the created of translation
-            for update, will return False and the updated of translation
+        Args:
+            locale (str): locale code of translation to save/create/delete
+
+        Returns:
+            (None|True|False, int|instance|[instances]: for deletion, will return None and the
+                number of translations deleted
+                for creation, will return True and the created of translation
+                for update, will return False and the updated of translation
         """
         obj = self.instance  # type: ignore
         trans_exists = obj.has_translation(locale)
         data = self.cleaned_data_for_locales.get(locale)
+
         if not data or all(not d for d in data.values()):
             return None, obj.delete_translation(locale) if trans_exists else 0
         return (
