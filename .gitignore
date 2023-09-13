@@ -15,4 +15,4 @@ __pycache__
 /.pytest_cache/
 docs/venv/
 docs/build/
-wmp.sqlite
+wagtail_parler.sqlite

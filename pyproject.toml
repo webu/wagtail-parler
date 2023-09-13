@@ -22,7 +22,7 @@
     known_django = ["django"]
     known_pylib = ["dateutil"]
     known_third_party = ["parler", "wagtail"]
-    known_first_party = ["wagtail_modeladmin_parler"]
+    known_first_party = ["wagtail_parler"]
     indent = '    '
     multi_line_output = 3
     length_sort = false

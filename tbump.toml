@@ -32,7 +32,7 @@ tag_template = "{new_version}"
 # section containing the path of the file, relative to the
 # tbump.toml location.
 [[file]]
-src = "wagtail-modeladmin_parler/__init__.py"
+src = "wagtail_parler/__init__.py"
 
 # You can specify a list of commands to
 # run after the files have been patched

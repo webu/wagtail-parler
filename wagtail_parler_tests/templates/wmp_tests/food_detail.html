@@ -1,4 +1,4 @@
-{% extends "wmp_tests/base.html" %}
+{% extends "wagtail_parler_tests/base.html" %}
 {% load i18n %}
 {% block body %}
 <article>
@@ -11,7 +11,7 @@
     <main>{{ object.content }}</main>
 
     <footer>
-        {% include "wmp_tests/inc/available_translations.html" %}
+        {% include "wagtail_parler_tests/inc/available_translations.html" %}
     </footer>
 </article>
 {% endblock body %}

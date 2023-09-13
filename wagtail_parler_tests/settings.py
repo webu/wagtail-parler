@@ -12,8 +12,8 @@ TIME_ZONE = "Europe/Paris"
 
 # add our apps and remove wagtail test apps
 INSTALLED_APPS = [
-    "wagtail_modeladmin_parler",
-    "wmp_tests",
+    "wagtail_parler",
+    "wagtail_parler_tests",
     "parler",
 ] + [app for app in INSTALLED_APPS if not app.startswith("wagtail.test")]
 
@@ -23,7 +23,7 @@ TEMPLATES[0]["OPTIONS"]["context_processors"] = [
     p for p in TEMPLATES[0]["OPTIONS"]["context_processors"] if not p.startswith("wagtail.test")
 ]
 WAGTAILADMIN_RICH_TEXT_EDITORS.pop("custom")  # remove testapp rich_text CustomRichTextArea
-ROOT_URLCONF = "wmp_tests.urls"
+ROOT_URLCONF = "wagtail_parler_tests.urls"
 
 AUTH_USER_MODEL = "auth.User"
 WAGTAIL_USER_CUSTOM_FIELDS = []

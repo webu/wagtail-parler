@@ -11,6 +11,7 @@
 import os
 import sys
 
+# Django imports
 import django
 
 sys.path.insert(0, os.path.abspath("../.."))
@@ -18,12 +19,14 @@ os.environ["DJANGO_SETTINGS_MODULE"] = "tests.settings"
 django.setup()
 
 
-from wagtail_modeladmin_parler import __version__ as wmp_version  # noqa
+# Third Party
+# wagtail / parler
+from wagtail_parler import __version__ as wagtail_parler_version
 
-project = "Wagtail ModelAdmin Parler"
+project = "Wagtail Parler"
 copyright = "2023, Webu"
 author = "Webu"
-release = wmp_version
+release = wagtail_parler_version
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

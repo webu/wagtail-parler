@@ -6,10 +6,10 @@
 # ex:
 #       django-admin.sh runserver
 #       django-admin.sh shell
-#       django-admin.sh makemigrations wagtail_modeladmin_parler
+#       django-admin.sh makemigrations wagtail_parler
 
-export DJANGO_SETTINGS_MODULE="wmp_tests.settings"
-export DATABASE_NAME="wmp.sqlite"
+export DJANGO_SETTINGS_MODULE="wagtail_parler_tests.settings"
+export DATABASE_NAME="wagtail_parler.sqlite"
 
 if [ ! -d ./.venv ] ; then
     python -m venv ./.venv

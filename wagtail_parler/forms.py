@@ -119,12 +119,13 @@ def build_translations_form(
 
     attrs = {
         "Meta": type("Meta", (), main_form_meta_attrs),
+        "auto_parler_fields": set(),
     }
     i18n_model = model._parler_meta.root_model  # pylint: disable=protected-access
     fields_for_model_kwargs = fields_for_model_kwargs or {}
     fields_for_model_kwargs["model"] = i18n_model
     for conf in settings.PARLER_LANGUAGES[None]:
         for field_name, field in fields_for_model(**fields_for_model_kwargs).items():
-            AutoParlerModelForm.auto_parler_fields.add(field_name)
+            attrs["auto_parler_fields"].add(field_name)
             attrs["translations_%s_%s" % (conf["code"], field_name)] = field
     return type("%sForm" % model.__name__, (AutoParlerModelForm, base_form), attrs)

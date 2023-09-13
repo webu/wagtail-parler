@@ -11,7 +11,7 @@ First, be sure to have a valid settings to use multiple languages with parler. e
 
 INSTALLED_APPS = [
     ...
-    "wagtail_modeladmin_parler",
+    "wagtail_parler",
     "parler",
 ]
 LANGUAGE_CODE = "fr"
@@ -68,18 +68,30 @@ class BaseFood(TranslatableModel):
         return self.safe_translation_getter("name", any_language=True)
 ```
 
-### Create a default ModelAdmin
+### Create a default Admin interface
 
-Know, let's create the [wagtail `ModelAdmin`][modeladmin] to manage this Model.
+Know, let's create the [wagtail `SnippetViewSet`][snippet] (or [wagtail `ModelAdmin`][modeladmin]) to manage this Model.
 
 ```python
 # wagtailhooks.py
 
-from wmp_tests.models import Food
+from wagtail.snippets.views.snippets import SnippetViewSet
+from wagtail.snippets.models import register_snippet
+from .models import Food
+
+class FoodAdmin(SnippetViewSet):
+    model = Food
+
+register_snippet(FoodAdmin)
+
+
+# Or for ModelAdmin:
+
+from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
+from .models import Food
 
 class FoodAdmin(ModelAdmin):
     model = Food
-
 
 modeladmin_register(FoodAdmin)
 ```
@@ -89,21 +101,33 @@ At this stage, if you go the admin interface to create a new `Nourriture`, you'l
 ![Food ModelAdmin Default](images/food-model-admin-default.png)
 
 
-### Add auto tabs for languages via ParlerModelAdminMixin
+### Add auto tabs for languages via ParlerSnippetAdminMixin (or ParlerModelAdminMixin)
 
 Tranlatable fields are not yet displayed. To add tabs for translations, you just
-had to extends `ParlerModelAdminMixin`:
+had to extends `ParlerSnippetAdminMixin` (or `ParlerModelAdminMixin` for ModelAdmin):
 
 
 ```python
 # wagtailhooks.py
+from wagtail.snippets.views.snippets import SnippetViewSet
+from wagtail.snippets.models import register_snippet
+from wagtail_parler.handlers import ParlerSnippetAdminMixin
+from .models import Food
 
-from wagtail_modeladmin_parler.handlers import ParlerModelAdminMixin
-from wmp_tests.models import Food
+class FoodAdmin(ParlerSnippetAdminMixin, SnippetViewSet):
+    model = Food
+
+register_snippet(FoodAdmin)
+
+
+# or for an usage with wagtail-modeladmin:
+
+from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
+from wagtail_parler.handlers import ParlerModelAdminMixin
+from .models import Food
 
 class FoodAdmin(ParlerModelAdminMixin, ModelAdmin):
     model = Food
-
 
 modeladmin_register(FoodAdmin)
 ```
@@ -144,7 +168,7 @@ class BaseFood(TranslatableModel):
 
 ## Use edit_handler from Model or ModelAdmin
 
-`wagtail-modeladmin-parler` supports all ways to define your ModelAdmin's edit_handlers.  
+`wagtail-parler` supports all ways to define your ModelAdmin's edit_handlers.  
 You can customize non-translated fields as you want. 
 
 ```python
@@ -166,7 +190,7 @@ class BaseFood(TranslatableModel):
 
 ## Customize handlers of the translated fields with `TranslationsList`
 
-Of course, `wagtail-modeladmin-parler` let you customize what is in language tabs.  
+Of course, `wagtail-parler` let you customize what is in language tabs.  
 To do this, you'll define a `TranslationsList` inside your `edit_handler`. 
 It will be used as a template to generate all languages tabs. 
 
@@ -178,8 +202,8 @@ from wagtail.admin.panels import ObjectList
 from wagtail.contrib.modeladmin.options import ModelAdmin
 from wagtail.contrib.modeladmin.options import modeladmin_register
 
-from wagtail_modeladmin_parler.handlers import ParlerModelAdminMixin
-from wagtail_modeladmin_parler.handlers import TranslationsList
+from wagtail_parler.handlers import ParlerModelAdminMixin
+from wagtail_parler.handlers import TranslationsList
 
 from .models import Food
 
@@ -288,5 +312,6 @@ PARLER_LANGUAGES = {
 ![Food ModelAdmin - Specific tabs 2](images/food-model-admin-specific-tabs-2.png)
 
 [wagtail]: https://docs.wagtail.org/en/stable/index.html
+[snippet]: https://docs.wagtail.org/en/stable/topics/snippets/
 [modeladmin]: https://docs.wagtail.org/en/stable/reference/contrib/modeladmin/index.html
 [django-parler]: https://django-parler.readthedocs.io/en/stable/

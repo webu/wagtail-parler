@@ -36,10 +36,10 @@ from bs4 import BeautifulSoup
 from bs4 import NavigableString
 from bs4 import Tag
 
-__all__ = ["WMPTests"]
+__all__ = ["WagtailParlerModelAdminTests", "WagtailParlerSnippetsTests"]
 
-# wagtail / parler
-from wmp_tests.models import Food
+# Third Party
+from wagtail_parler_tests.models import Food
 
 EXTRA_SETTINGS = {
     "CUSTOM_TABS_LABELS": dict(
@@ -76,15 +76,17 @@ EXTRA_SETTINGS = {
 }
 
 
-class WMPTests(TestCase):
+class WagtailParlerBaseTests:
     fixtures = ["test_fixtures.json"]
+    admin_interface = None
+    matching_actions = {}
 
-    def setUp(self) -> None:
-        self.client = Client()
+    def setUp(self: TestCase) -> None:
+        self.client = Client(enforce_csrf_checks=False)
         self.client.login(username="admin", password="admin")
         return super().setUp()
 
-    def _check_tabs(self, soup: BeautifulSoup, expected_tabs: List[str]) -> None:
+    def _check_tabs(self: TestCase, soup: BeautifulSoup, expected_tabs: List[str]) -> None:
         tabs_list = soup.find("div", class_="w-tabs__list")
         assert isinstance(tabs_list, Tag)
         tabs = tabs_list.find_all("a")
@@ -120,7 +122,7 @@ class WMPTests(TestCase):
             if sub_sections:
                 self._check_sections(section, sub_sections)
 
-    def _check_fields(self, container: Tag, expected_fields: Dict[str, dict]) -> None:
+    def _check_fields(self: TestCase, container: Tag, expected_fields: Dict[str, dict]) -> None:
         fields_positions = []
         for field_name, opts in expected_fields.items():
             tag_name = opts.get("tag_name", "input")
@@ -129,21 +131,43 @@ class WMPTests(TestCase):
                 raise Exception("Field %s#%s not found" % (tag_name, field_name))
             self.assertEqual(input_tag["name"], field_name)
             fields_positions.append((field_name, (input_tag.sourceline, input_tag.sourcepos)))
-            if "type" in opts:
-                self.assertEqual(input_tag["type"], opts["type"])
-            if "value" in opts:
-                if opts.get("type", None) == "textarea":
-                    value = ...
+            for attr_name, attr_value in opts.items():
+                if attr_name == "tag_name":
+                    continue
+                elif attr_value in (True, False, None):
+                    self.assertEqual(attr_name in input_tag.attrs, attr_value)
+                elif attr_name == "value":
+                    if opts.get("tag_name", None) == "textarea":
+                        value = ...
+                    else:
+                        value = input_tag["value"]
+                    self.assertEqual(value, attr_value)
                 else:
-                    value = input_tag["value"]
-                self.assertEqual(value, opts["value"])
+                    self.assertEqual(input_tag[attr_name], attr_value)
         # checks fields order
         fields_as_found_order = [
             field_name for field_name, pos in sorted(fields_positions, key=lambda x: x[1])
         ]
         self.assertEqual(fields_as_found_order, list(expected_fields))
 
-    def _get_soup(self, path, expected_status: int = 200) -> BeautifulSoup:
+    def _get_admin_soup(self, app_label, model_name, action=None, pk=None):
+        url = self._get_admin_url(app_label, model_name, action, pk)
+        return self._get_soup(url)
+
+    def _get_admin_url(self, app_label, model_name, action=None, pk=None):
+        if self.admin_interface == "modeladmin":
+            url = f"/fr/cms/{app_label}/{model_name}/"
+        elif self.admin_interface == "snippets":
+            url = f"/fr/cms/snippets/{app_label}/{model_name}/"
+        else:
+            raise Exception("bad admin_interface: %s" % self.admin_interface)
+        if action:
+            url += "%s/" % self.matching_actions.get(action, action)
+            if pk:
+                url += "%d/" % pk
+        return url
+
+    def _get_soup(self: TestCase, path, expected_status: int = 200) -> BeautifulSoup:
         resp = self.client.get(path)
         assert isinstance(resp, HttpResponse)
         if expected_status:
@@ -151,7 +175,7 @@ class WMPTests(TestCase):
         return BeautifulSoup(resp.content, "html.parser")
 
     def test_auto_tabs(self) -> None:
-        soup = self._get_soup("/fr/cms/wmp_tests/food/edit/1/")
+        soup = self._get_admin_soup("wagtail_parler_tests", "food", "edit", 1)
         expected_tabs = [
             "Untranslated data",
             "French 🟢",
@@ -162,7 +186,7 @@ class WMPTests(TestCase):
 
     @override_settings(**EXTRA_SETTINGS["CUSTOM_TABS_LABELS"])
     def test_custom_tabs_labels(self) -> None:
-        soup = self._get_soup("/fr/cms/wmp_tests/food/edit/1/")
+        soup = self._get_admin_soup("wagtail_parler_tests", "food", "edit", 1)
         expected_tabs = [
             "Untranslated data",
             "🇫🇷 Français 🟢",
@@ -172,7 +196,7 @@ class WMPTests(TestCase):
         self._check_tabs(soup, expected_tabs)
 
     def test_panels_from_model(self) -> None:
-        soup = self._get_soup("/fr/cms/wmp_tests/foodwithpanelsinsidemodel/create/")
+        soup = self._get_admin_soup("wagtail_parler_tests", "foodwithpanelsinsidemodel", "add")
         expected_tabs = [
             "Untranslated data",
             "French",
@@ -201,7 +225,7 @@ class WMPTests(TestCase):
         )
 
     def test_edit_handler_from_model(self) -> None:
-        soup = self._get_soup("/fr/cms/wmp_tests/foodwithedithandler/create/")
+        soup = self._get_admin_soup("wagtail_parler_tests", "foodwithedithandler", "add")
         expected_tabs = [
             "Untranslated data",
             "French",
@@ -230,7 +254,7 @@ class WMPTests(TestCase):
         )
 
     def test_edit_handler_from_modeladmin(self) -> None:
-        soup = self._get_soup("/fr/cms/wmp_tests/foodwithspecificedithandler/create/")
+        soup = self._get_admin_soup("wagtail_parler_tests", "foodwithspecificedithandler", "add")
         expected_tabs = [
             "Score de miam",
             "fr: French",
@@ -248,15 +272,15 @@ class WMPTests(TestCase):
         for locale_code, locale_name in tabs:
             self._check_tab(
                 soup,
-                f"{locale_code}_{locale_name}",
+                f"parler_translations_{locale_code}",
                 [
                     #  panel-child-fr_french-ctranslations_fr_name-section
-                    f"panel-child-{locale_code}_{locale_name}-translations_{locale_code}_name-section",
+                    f"panel-child-parler_translations_{locale_code}-translations_{locale_code}_name-section",
                     (
-                        f"panel-child-{locale_code}_{locale_name}-html_content-section",
+                        f"panel-child-parler_translations_{locale_code}-html_content-section",
                         [
-                            f"panel-child-{locale_code}_{locale_name}-child-html_content-translations_{locale_code}_summary-section",
-                            f"panel-child-{locale_code}_{locale_name}-child-html_content-translations_{locale_code}_content-section",
+                            f"panel-child-parler_translations_{locale_code}-child-html_content-translations_{locale_code}_summary-section",
+                            f"panel-child-parler_translations_{locale_code}-child-html_content-translations_{locale_code}_content-section",
                         ],
                     ),
                 ],
@@ -276,18 +300,108 @@ class WMPTests(TestCase):
             {"vegetarian": {}, "vegan": {}},
         )
 
-    def test_create_translations(self) -> None:
+    def test_create_translations(self: TestCase) -> None:
         """checks we can create new translations for an instance"""
-        pass
+        jelly = Food.objects.get(pk=1)
+        self.assertNotIn("es", jelly.get_available_languages())
+        edit_url = self._get_admin_url("wagtail_parler_tests", "food", "edit", 1)
+        list_url = self._get_admin_url("wagtail_parler_tests", "food")
+        data = {
+            "yum_rating": "3",
+            "vegetarian": "on",
+            "vegan": "on",
+            "translations_fr_name": "Gelée",
+            "translations_fr_summary": "Summary FR",
+            "translations_fr_content": "Content FR",
+            "translations_en_name": "Jelly",
+            "translations_en_summary": "Summary EN",
+            "translations_en_content": "Content EN",
+            "translations_es_name": "Jelly ES",
+        }
+        resp = self.client.post(edit_url, data)
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.url, list_url)
+        jelly = Food.objects.get(pk=1)
+        self.assertIn("es", jelly.get_available_languages())
+        self.assertEqual(jelly.get_translation("es").name, "Jelly ES")
 
-    def test_update_translations(self) -> None:
+    def test_update_translations(self: TestCase) -> None:
         """checks we can update existing translations for an instance"""
-        pass
+        jelly = Food.objects.get(pk=1)
+        self.assertIn("en", jelly.get_available_languages())
+        self.assertEqual(jelly.get_translation("en").name, "Jelly")
+        edit_url = self._get_admin_url("wagtail_parler_tests", "food", "edit", 1)
+        list_url = self._get_admin_url("wagtail_parler_tests", "food")
+        data = {
+            "yum_rating": "3",
+            "vegetarian": "on",
+            "vegan": "on",
+            "translations_fr_name": "Gelée",
+            "translations_fr_summary": "Summary FR",
+            "translations_fr_content": "Content FR",
+            "translations_en_name": "Jelly updated",
+            "translations_en_summary": "Summary EN",
+            "translations_en_content": "Content EN",
+        }
+        resp = self.client.post(edit_url, data)
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.url, list_url)
+        jelly = Food.objects.get(pk=1)
+        self.assertEqual(jelly.get_translation("en").name, "Jelly updated")
+        self.assertNotIn("es", jelly.get_available_languages())
 
-    def test_delete_translations(self) -> None:
+    def test_delete_translations(self: TestCase) -> None:
         """checks we can delete existing translations for an instance"""
-        pass
+        jelly = Food.objects.get(pk=1)
+        self.assertIn("en", jelly.get_available_languages())
+        self.assertEqual(jelly.get_translation("en").name, "Jelly")
+        edit_url = self._get_admin_url("wagtail_parler_tests", "food", "edit", 1)
+        list_url = self._get_admin_url("wagtail_parler_tests", "food")
+        data = {
+            "yum_rating": "3",
+            "vegetarian": "on",
+            "vegan": "on",
+            "translations_fr_name": "Gelée",
+            "translations_fr_summary": "Summary FR",
+            "translations_fr_content": "Content FR",
+        }
+        resp = self.client.post(edit_url, data)
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.url, list_url)
+        jelly = Food.objects.get(pk=1)
+        self.assertNotIn("en", jelly.get_available_languages())
+
+    def test_delete_instance(self: TestCase) -> None:
+        """checks we can delete existing translations for an instance"""
+        delete_url = self._get_admin_url("wagtail_parler_tests", "food", "delete", 1)
+        list_url = self._get_admin_url("wagtail_parler_tests", "food")
+        resp = self.client.post(delete_url)
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.url, list_url)
+        with self.assertRaises(Food.DoesNotExist):
+            Food.objects.get(pk=1)
 
     def test_required_translation(self) -> None:
         """checks that translation matching the default locale is required"""
-        pass
+        soup = self._get_admin_soup("wagtail_parler_tests", "food", "add")
+        self._check_tab(
+            soup,
+            "parler_translations_fr",
+            [
+                "panel-child-parler_translations_fr-translations_fr_name-section",
+            ],
+            {
+                "translations_fr_name": {"required": True},
+                "translations_fr_summary": {"tag_name": "textarea", "required": True},
+                "translations_fr_content": {"tag_name": "textarea", "required": True},
+            },
+        )
+
+
+class WagtailParlerModelAdminTests(WagtailParlerBaseTests, TestCase):
+    admin_interface = "modeladmin"
+    matching_actions = {"add": "create"}
+
+
+class WagtailParlerSnippetsTests(WagtailParlerBaseTests, TestCase):
+    admin_interface = "snippets"

@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wmp_tests', '0001_initial'),
+        ('wagtail_parler_tests', '0001_initial'),
     ]
 
     operations = [

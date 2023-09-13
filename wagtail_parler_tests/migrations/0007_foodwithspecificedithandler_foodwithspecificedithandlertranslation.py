@@ -9,7 +9,7 @@ import parler.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wmp_tests', '0006_foodwithedithandler_foodwithedithandlertranslation'),
+        ('wagtail_parler_tests', '0006_foodwithedithandler_foodwithedithandlertranslation'),
     ]
 
     operations = [
@@ -35,11 +35,11 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=255, verbose_name='Nom')),
                 ('summary', models.TextField(verbose_name='Résumé')),
                 ('content', models.TextField(verbose_name='Contenu')),
-                ('master', parler.fields.TranslationsForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='translations', to='wmp_tests.foodwithspecificedithandler')),
+                ('master', parler.fields.TranslationsForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='translations', to='wagtail_parler_tests.foodwithspecificedithandler')),
             ],
             options={
                 'verbose_name': 'Nourriture 4 Translation',
-                'db_table': 'wmp_tests_foodwithspecificedithandler_translation',
+                'db_table': 'wagtail_parler_tests_foodwithspecificedithandler_translation',
                 'db_tablespace': '',
                 'managed': True,
                 'default_permissions': (),

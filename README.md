@@ -1,6 +1,6 @@
-# Wagtail ModelAdmin Parler 🧀 🐦 
+# Wagtail Parler 🧀 🐦 
 
-[![Stable Version](https://img.shields.io/pypi/v/wagtail-modeladmin-parler?color=blue)](https://pypi.org/project/wagtail-modeladmin-parler/)
+[![Stable Version](https://img.shields.io/pypi/v/wagtail-parler?color=blue)](https://pypi.org/project/wagtail-parler/)
 ![](https://img.shields.io/badge/python-3.7%20to%203.11-blue)
 ![](https://img.shields.io/badge/django-3.2%20to%204.2-blue)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -8,12 +8,16 @@
 [![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 [![semver](https://img.shields.io/badge/semver-2.0.0-green)](https://semver.org/)
-[![Documentation Status](https://readthedocs.org/projects/wagtail-modeladmin-parler/badge/?version=latest)](https://wagtail-modeladmin-parler.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/wagtail-parler/badge/?version=latest)](https://wagtail-parler.readthedocs.io/en/latest/?badge=latest)
 
-Brings "omelette du fromage" 🧀 from parler into wagtail 🐦 via modeladmin
+Brings "omelette du fromage" 🧀 from parler into wagtail 🐦 for your custom models 
+(via modeladmin or wagtail snippets)
 
-Wagtail ModelAdmin Parler (WMP) helps you to use `django-parler` with `wagtail-modeladmin` to 
-manage your custom models and translations.
+![Wagtail Parler Logo](docs/source/images/wagtail-parler.png)
+
+Wagtail Parler helps you to use `django-parler` inside `wagtail` to translate your customs models. 
+It works for `wagtail-modeladmin` (which is now deprectaed) and also the new official way: 
+wagtail's snippets.
 
 ![Translated and untranslated tabs](docs/source/images/translated-and-untranslated-tabs.png)
 
@@ -37,31 +41,31 @@ To ensure code quality and consistency:
 
 ## Why
 
-There is already an internationalisation support in wagtail via their own language features called [wagtail-localize](https://www.wagtail-localize.org/). 
+There is already an internationalisation support in wagtail via their own language features 
+called [wagtail-localize](https://www.wagtail-localize.org/). 
 This app [also support wagtail modeladmin](https://www.wagtail-localize.org/how-to/modeladmin/).
 But the approach of wagtail-localize could be unconvenient as translations are stored in the same
 table than "main instances", resulting specific queryset and managers to manage your models.  
 For app's like treebeard, it can break the logic of your tree.
 
-For those reasons, some people as us prefer to use django-parler as translations approach. If it's
-your preferance too, "wagtail modeladmin parler" will fit to you: it will allow you to use 
-django-parler to translate your own models and still have a usefull wagtail modeladmin interface to
-manage translations.
+For those reasons, you could prefer to use `django-parler` as translations approach. Wagtail Parler is fit to you: it will allow you to use 
+`django-parler` to translate your own models and still have a usefull wagtail interface to
+manage translations (via official wagtail's snippet admin but also with the old `wagtail-modeladmin`)
 
 ## Installation
 
 Install the package via pip. We consider you already have django-parler and wagtail installed.
 
-`pip install wagtail-modeladmin-parler`
+`pip install wagtail-parler`
 
-Then, in settings.py, add `wagtail_modeladmin_parler` to the installed apps.
+Then, in settings.py, add `wagtail_parler` to the installed apps.
 
 ```python
 # settings.py
 
 INSTALLED_APPS = [
     # …
-    "wagtail_modeladmin_parler",
+    "wagtail_parler",
     # …
 ]
 ```
@@ -69,23 +73,38 @@ INSTALLED_APPS = [
 ## Basic Usage
 
 
-You just have to add `ParlerModelAdminMixin` to your `ModelAdmin`, *et voilà*, you are ready to 
+You just have to add `ParlerSnippetAdminMixin` to your `SnippetViewSet` (or `ParlerModelAdminMixin` to your `ModelAdmin`), *et voilà*, you are ready to 
 eat *omelette du fromage*.
 
 ```python
-from wagtail.contrib.modeladmin.options import ModelAdmin
-from wagtail_modeladmin_parler.handlers import ParlerModelAdminMixin
+
+from wagtail.snippets.views.snippets import SnippetViewSet
+from wagtail.snippets.models import register_snippet
+from wagtail_parler.handlers import ParlerSnippetAdminMixin
 from .models import Food
 
 
+class FoodAdmin(ParlerSnippetAdminMixin, SnippetViewSet):
+    model = Food
+
+register_snippet(FoodAdmin)
+
+# or for an usage with wagtail-modeladmin:
+
+from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
+from wagtail_parler.handlers import ParlerModelAdminMixin
+from .models import Food
+
 class FoodAdmin(ParlerModelAdminMixin, ModelAdmin):
     model = Food
+
+modeladmin_register(FoodAdmin)
 ```
 
 
 ## Extra 🧀🐦
 
-More advanced usage, tests, etc., are documented [in the doc](https://readthedocs.org/projects/wagtail-modeladmin-parler/badge/?version=latest).
+More advanced usage, tests, etc., are documented [in the doc](https://readthedocs.org/projects/wagtail-parler/badge/?version=latest).
 
 > Maître [Wagtail][wagtail], sur un arbre perché,  
 > Tenait en son bec une omelette du fromage.  

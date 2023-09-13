@@ -1,6 +1,6 @@
 [
     {
-        "model": "wmp_tests.foodtranslation",
+        "model": "wagtail_parler_tests.foodtranslation",
         "pk": 1,
         "fields": {
             "language_code": "fr",
@@ -11,7 +11,7 @@
         }
     },
     {
-        "model": "wmp_tests.foodtranslation",
+        "model": "wagtail_parler_tests.foodtranslation",
         "pk": 2,
         "fields": {
             "language_code": "fr",
@@ -22,7 +22,7 @@
         }
     },
     {
-        "model": "wmp_tests.foodtranslation",
+        "model": "wagtail_parler_tests.foodtranslation",
         "pk": 3,
         "fields": {
             "language_code": "fr",
@@ -33,7 +33,7 @@
         }
     },
     {
-        "model": "wmp_tests.foodtranslation",
+        "model": "wagtail_parler_tests.foodtranslation",
         "pk": 4,
         "fields": {
             "language_code": "fr",
@@ -44,7 +44,7 @@
         }
     },
     {
-        "model": "wmp_tests.foodtranslation",
+        "model": "wagtail_parler_tests.foodtranslation",
         "pk": 5,
         "fields": {
             "language_code": "en",
@@ -55,7 +55,7 @@
         }
     },
     {
-        "model": "wmp_tests.foodtranslation",
+        "model": "wagtail_parler_tests.foodtranslation",
         "pk": 6,
         "fields": {
             "language_code": "en",
@@ -66,7 +66,7 @@
         }
     },
     {
-        "model": "wmp_tests.food",
+        "model": "wagtail_parler_tests.food",
         "pk": 1,
         "fields": {
             "yum_rating": 3,
@@ -75,7 +75,7 @@
         }
     },
     {
-        "model": "wmp_tests.food",
+        "model": "wagtail_parler_tests.food",
         "pk": 2,
         "fields": {
             "yum_rating": 5,
@@ -84,7 +84,7 @@
         }
     },
     {
-        "model": "wmp_tests.food",
+        "model": "wagtail_parler_tests.food",
         "pk": 3,
         "fields": {
             "yum_rating": 8,
@@ -93,7 +93,7 @@
         }
     },
     {
-        "model": "wmp_tests.food",
+        "model": "wagtail_parler_tests.food",
         "pk": 4,
         "fields": {
             "yum_rating": 10,

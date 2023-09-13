@@ -1,8 +1,8 @@
-# Wagtail ModelAdmin Parler
+# Wagtail Parler
 
 ```{toctree}
 :maxdepth: 2
-wmp
+wagtail_parler
 configuration
 usage
 ```
