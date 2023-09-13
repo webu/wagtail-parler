@@ -13,13 +13,13 @@
 Brings "omelette du fromage" 🧀 from parler into wagtail 🐦 for your custom models 
 (via modeladmin or wagtail snippets)
 
-![Wagtail Parler Logo](docs/source/images/wagtail-parler.png)
+![Wagtail Parler Logo](https://raw.githubusercontent.com/webu/wagtail-parler/main/docs/source/images/wagtail-parler.png)
 
 Wagtail Parler helps you to use `django-parler` inside `wagtail` to translate your customs models. 
 It works for `wagtail-modeladmin` (which is now deprectaed) and also the new official way: 
 wagtail's snippets.
 
-![Translated and untranslated tabs](docs/source/images/translated-and-untranslated-tabs.png)
+![Translated and untranslated tabs](https://raw.githubusercontent.com/webu/wagtail-parler/main/docs/source/images/translated-and-untranslated-tabs.png)
 
 ## Tests, QA, consistency and compatibility
 
