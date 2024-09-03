@@ -1,0 +1,11 @@
+# 0.2.0 - 2024-09-04
+
+* remove support of wagtail < 5.0
+* remove support of django < 4.2
+* add support of wagtail 6.0, 6.1, 6.2
+* fix usage of wagtail fields overrides registry
+* add this CHANGELOG 😸
+
+# 0.1.x - 2023-09-18
+
+First version 🧀 🐦

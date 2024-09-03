@@ -1,8 +1,9 @@
 # Wagtail Parler 🧀 🐦 
 
 [![Stable Version](https://img.shields.io/pypi/v/wagtail-parler?color=blue)](https://pypi.org/project/wagtail-parler/)
-![](https://img.shields.io/badge/python-3.7%20to%203.11-blue)
-![](https://img.shields.io/badge/django-3.2%20to%204.2-blue)
+![](https://img.shields.io/badge/python-3.9%20to%203.11-blue)
+![](https://img.shields.io/badge/django-4.2%20to%205.0-blue)
+![](https://img.shields.io/badge/wagtail-5.0%20to%206.2-blue)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 ![](https://img.shields.io/badge/coverage-100%25-green)
 [![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
@@ -25,10 +26,10 @@ wagtail's snippets.
 
 This app is tested to runs with:
 
-* Django 3.2, 4.2
-* Wagtail 4.1, 4.2, 5.0, 5.1
+* Django 4.2, 5.0
+* Wagtail 5.0, 5.1, 5.2, 6.0, 6.1, 6.2
 * Parler 2.3 (probably older ones to, it's just not tested)
-* Python 3.7, 3.9, 3.11
+* Python 3.9, 3.11
 
 To ensure code quality and consistency:
 
@@ -91,7 +92,7 @@ register_snippet(FoodAdmin)
 
 # or for an usage with wagtail-modeladmin:
 
-from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
+from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 from wagtail_parler.handlers import ParlerModelAdminMixin
 from .models import Food
 

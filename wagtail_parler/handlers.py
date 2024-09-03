@@ -11,9 +11,9 @@ if TYPE_CHECKING:
     from typing import Optional
     from typing import Set
     from typing import Tuple
+
     from wagtail.admin.panels import Panel
-    from wagtail.contrib.modeladmin.options import ModelAdmin
-    from wagtail.snippets.views.snippets import SnippetViewSet
+    from wagtail_modeladmin.options import ModelAdmin
 
 # Django imports
 from django.conf import settings
@@ -25,12 +25,12 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
 from wagtail.admin.panels import ObjectList
 from wagtail.admin.panels import TabbedInterface
+from wagtail.snippets.views.snippets import SnippetViewSet
 
 # wagtail / parler
 from wagtail_parler import settings as wp_settings
 
 # Local Apps
-from .compat import CompatibleSnippetViewSetMixin
 from .forms import build_translations_form
 
 
@@ -155,10 +155,26 @@ class ParlerAdminWagtailMixin:
                 )
             ]
             displayed_fields = self._set_translations_handlers(handlers)
+        # currently (wagtail 6), `ModelViewSet.formfield_for_dbfield` returns
+        # `db_field.formfield(**kwargs)` instead of using the wagtail registry fields overrides
+        # as the WagtailAdminModelForm do via it's Meta.formfield_callback.
+        # So we don't want to use ModelViewSet.formfield_for_dbfield BUT if the user
+        # defines it's own MyViewSet.formfield_for_dbfield, we must use it (because he knows
+        # what he does and it's his responsability to use the wagtail registry fields overrides)
+        # sources:
+        # - https://github.com/wagtail/wagtail/blob/main/wagtail/admin/viewsets/model.py#L534
+        # - https://github.com/wagtail/wagtail/blob/main/wagtail/admin/forms/models.py#L129
+        main_form_meta_attrs = {}
+        formfield_for_dbfield = getattr(self, "formfield_for_dbfield", None)
+        if (
+            formfield_for_dbfield
+            and formfield_for_dbfield.__func__.__qualname__ != "ModelViewSet.formfield_for_dbfield"
+        ):
+            main_form_meta_attrs["formfield_callback"] = self.formfield_for_dbfield
         base_form_class = build_translations_form(
             self.model,
             fields_for_model_kwargs={"fields": displayed_fields},
-            base_form=getattr(self, "form", None),
+            base_form=getattr(self, "parler_base_form_class", None),
         )
         return TabbedInterface(handlers, base_form_class=base_form_class)
 
@@ -192,7 +208,7 @@ class ParlerModelAdminMixin(ParlerAdminWagtailMixin):
     """
 
 
-class ParlerSnippetAdminMixin(ParlerAdminWagtailMixin, CompatibleSnippetViewSetMixin):
+class ParlerSnippetAdminMixin(ParlerAdminWagtailMixin, SnippetViewSet):
     """
     Mixin to use with SnippetViewSet to manage parler translations.
 

@@ -87,7 +87,7 @@ register_snippet(FoodAdmin)
 
 # Or for ModelAdmin:
 
-from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
+from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 from .models import Food
 
 class FoodAdmin(ModelAdmin):
@@ -122,7 +122,7 @@ register_snippet(FoodAdmin)
 
 # or for an usage with wagtail-modeladmin:
 
-from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
+from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 from wagtail_parler.handlers import ParlerModelAdminMixin
 from .models import Food
 
@@ -199,8 +199,8 @@ It will be used as a template to generate all languages tabs.
 
 from wagtail.admin.panels import FieldPanel
 from wagtail.admin.panels import ObjectList
-from wagtail.contrib.modeladmin.options import ModelAdmin
-from wagtail.contrib.modeladmin.options import modeladmin_register
+from wagtail_modeladmin.options import ModelAdmin
+from wagtail_modeladmin.options import modeladmin_register
 
 from wagtail_parler.handlers import ParlerModelAdminMixin
 from wagtail_parler.handlers import TranslationsList
