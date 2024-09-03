@@ -5,20 +5,16 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import Any
-    from typing import Dict
-    from typing import Generator
-    from typing import Optional
-    from typing import Set
-    from typing import Tuple
+    from typing import Any, Dict, Generator, Optional, Set, Tuple
+
     from django.db.models import Model
 
 # Django imports
 from django.conf import settings
 from django.db import transaction
 from django.forms import Form
-from django.forms.models import ModelForm
 from django.forms.models import fields_for_model
+from wagtail.admin.forms import WagtailAdminModelForm
 
 
 class AutoParlerModelForm(Form):
@@ -33,7 +29,7 @@ class AutoParlerModelForm(Form):
     def __init__(self, *args: Tuple, **kwargs: Dict) -> None:
         kwargs.setdefault("initial", {})
         self._init_i18n_initials(kwargs.get("instance"), kwargs["initial"])
-        self.for_user = kwargs.pop("for_user")
+        self.for_user = kwargs.pop("for_user", None)
         super().__init__(*args, **kwargs)
         # All fields of others locales than the default one must NOT be required
         for conf in settings.PARLER_LANGUAGES[None][1:]:
@@ -121,13 +117,13 @@ def build_translations_form(
     model: Model,
     main_form_meta_attrs: Optional[Dict] = None,
     fields_for_model_kwargs: Optional[Dict] = None,
-    base_form: Optional[ModelForm] = None,
-) -> ModelForm:
+    base_form: Optional[WagtailAdminModelForm] = None,
+) -> WagtailAdminModelForm:
     """
     Build a model form with support of translable fields which are auto added to the form
     """
     if not base_form:
-        base_form = ModelForm
+        base_form = WagtailAdminModelForm
 
     if not main_form_meta_attrs:
         main_form_meta_attrs = {}
@@ -137,7 +133,7 @@ def build_translations_form(
         main_form_meta_attrs["fields"] = "__all__"
 
     attrs = {
-        "Meta": type("Meta", (), main_form_meta_attrs),
+        "Meta": type("Meta", (WagtailAdminModelForm.Meta,), main_form_meta_attrs),
         "auto_parler_fields": set(),
     }
     i18n_model = model._parler_meta.root_model  # pylint: disable=protected-access

@@ -59,3 +59,10 @@ myst_heading_anchors = 3
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
+
+# Tell Jinja2 templates the build is running on Read the Docs
+# see https://about.readthedocs.com/blog/2024/07/addons-by-default/
+if os.environ.get("READTHEDOCS", "") == "True":
+    if "html_context" not in globals():
+        html_context = {}
+    html_context["READTHEDOCS"] = True

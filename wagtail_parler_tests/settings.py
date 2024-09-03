@@ -15,6 +15,7 @@ INSTALLED_APPS = [
     "wagtail_parler",
     "wagtail_parler_tests",
     "parler",
+    "wagtail_modeladmin",
 ] + [app for app in INSTALLED_APPS if not app.startswith("wagtail.test")]
 
 MIDDLEWARE = [m for m in MIDDLEWARE if not m.startswith("wagtail.test")]  # remove test middleware
