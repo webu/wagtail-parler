@@ -1,6 +1,19 @@
-# 0.2.0 - 2024-09-18
+# 0.2.4 - 2024-09-18
 
-* add supports of `TitleFieldPanel.targets` to autocomplete unstranslated or translated fields
+* fix github actions pour qa control
+
+
+# 0.2.3 - 2024-09-18
+
+* add supports of `TitleFieldPanel.targets` to autocomplete untranslated or translated fields
+
+# 0.2.2 - 2024-09-05
+
+* github / tox / black / pip release fix
+
+# 0.2.1 - 2024-09-05
+
+* github / tox / black / pip release fix
 
 # 0.2.0 - 2024-09-04
 
