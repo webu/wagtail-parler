@@ -19,6 +19,7 @@ from django.utils.translation import gettext_lazy as _
 from bs4 import BeautifulSoup
 from bs4 import NavigableString
 from bs4 import Tag
+
 from wagtail_parler_tests.models import Food
 
 __all__ = ["WagtailParlerModelAdminTests", "WagtailParlerSnippetsTests"]
@@ -249,6 +250,7 @@ class WagtailParlerBaseTests:
     def test_edit_handler_from_modeladmin(self) -> None:
         soup = self._get_admin_soup("wagtail_parler_tests", "foodwithspecificedithandler", "add")
         expected_tabs = [
+            "Slug",
             "Score de miam",
             "fr: French",
             "en: English",
@@ -302,6 +304,7 @@ class WagtailParlerBaseTests:
         edit_url = self._get_admin_url("wagtail_parler_tests", "food", "edit", 1)
         list_url = self._get_admin_url("wagtail_parler_tests", "food")
         data = {
+            "slug": "gely",
             "yum_rating": "3",
             "vegetarian": "on",
             "vegan": "on",
@@ -352,6 +355,7 @@ class WagtailParlerBaseTests:
         edit_url = self._get_admin_url("wagtail_parler_tests", "food", "edit", 1)
         list_url = self._get_admin_url("wagtail_parler_tests", "food")
         data = {
+            "slug": "gely",
             "yum_rating": "3",
             "vegetarian": "on",
             "vegan": "on",
@@ -396,6 +400,7 @@ class WagtailParlerBaseTests:
         edit_url = self._get_admin_url("wagtail_parler_tests", "food", "edit", 1)
         list_url = self._get_admin_url("wagtail_parler_tests", "food")
         data = {
+            "slug": "gely",
             "yum_rating": "3",
             "vegetarian": "on",
             "vegan": "on",

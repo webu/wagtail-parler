@@ -1,3 +1,7 @@
+# 0.2.0 - 2024-09-18
+
+* add supports of `TitleFieldPanel.targets` to autocomplete unstranslated or translated fields
+
 # 0.2.0 - 2024-09-04
 
 * remove support of wagtail < 5.0

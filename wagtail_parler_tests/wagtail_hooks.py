@@ -5,32 +5,33 @@ from copy import deepcopy
 from django.utils.translation import gettext_lazy as _
 
 # Third Party
-from wagtail.admin.panels import FieldPanel, ObjectList
+from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import ObjectList
+from wagtail.admin.panels import TitleFieldPanel
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
-from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
+from wagtail_modeladmin.options import ModelAdmin
+from wagtail_modeladmin.options import modeladmin_register
 
 # wagtail / parler
-from wagtail_parler.handlers import (
-    ParlerModelAdminMixin,
-    ParlerSnippetAdminMixin,
-    TranslationsList,
-)
-from wagtail_parler_tests.models import (
-    Food,
-    FoodWithEditHandler,
-    FoodWithEmptyEditHandler,
-    FoodWithPanelsInsideModel,
-    FoodWithSpecificEditHandler,
-)
+from wagtail_parler.handlers import ParlerModelAdminMixin
+from wagtail_parler.handlers import ParlerSnippetAdminMixin
+from wagtail_parler.handlers import TranslationsList
+
+from wagtail_parler_tests.models import Food
+from wagtail_parler_tests.models import FoodWithEditHandler
+from wagtail_parler_tests.models import FoodWithEmptyEditHandler
+from wagtail_parler_tests.models import FoodWithPanelsInsideModel
+from wagtail_parler_tests.models import FoodWithSpecificEditHandler
 
 specific_edit_handler = ObjectList(
     children=[
+        FieldPanel("slug"),
         FieldPanel("yum_rating"),
         TranslationsList(
             heading="%(code)s: %(locale)s %(status)s",  # type: ignore
             children=[  # type: ignore
-                FieldPanel("name"),
+                TitleFieldPanel("name", targets=["slug", "summary"]),
                 ObjectList(
                     heading="HTML content",
                     children=[

@@ -25,6 +25,7 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
 from wagtail.admin.panels import ObjectList
 from wagtail.admin.panels import TabbedInterface
+from wagtail.admin.panels import TitleFieldPanel
 from wagtail.snippets.views.snippets import SnippetViewSet
 
 # wagtail / parler
@@ -119,9 +120,22 @@ class ParlerAdminWagtailMixin:
             else:
                 base_handler.children = children
 
+        first_title_field_targets = set()
+
         def recurse_child_replace(handler: Panel, locale: str) -> None:
             for child in handler.children:
                 if isinstance(child, FieldPanel) and child.field_name in translated_fields:
+                    if isinstance(child, TitleFieldPanel) and child.targets:
+                        new_targets = []
+                        for target in child.targets:
+                            if target in translated_fields:
+                                target = "translations_%s_%s" % (locale, target)
+                            elif target in first_title_field_targets:
+                                continue
+                            else:
+                                first_title_field_targets.add(target)
+                            new_targets.append(target)
+                        child.targets = new_targets
                     displayed_fields.add(child.field_name)
                     child.field_name = "translations_%s_%s" % (locale, child.field_name)
                 if hasattr(child, "children"):

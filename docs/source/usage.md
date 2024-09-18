@@ -309,6 +309,23 @@ PARLER_LANGUAGES = {
 ...
 ```
 
+## Autocomplete fields from TitleFieldPanel
+
+If you configure your i18n TitleFieldPanel to target some other fields, `wagtail_parler` will configure it as it:
+
+* if a target is a translated field, the translated field will be auto populated by the source field of the same lang (ex: `translations_title_fr` will populate `translations_slug_fr`)
+* if a target is an unstranslated field, only the first translated source field will populate the target. (ex: if `fr` is your first language, `translations_title_fr` will populate `no_i18n_slug`, but `translations_title_en` won't)
+
+If your source TitleFieldPanel is an unstranslated field but you want it autocomplete some translated fields, you'll have to explicitely target all translated fields (a translated field `foo` will be prefixed by `translations_` and suffixed by `_<lang>`: `translation_foo_fr`, `translation_foo_en`…). ex: 
+
+```python
+    ...
+    children = [
+        TitleFieldPanel("no_i18n_title", targets=["translations_slug_fr", "translations_slug_en", "translations_slug_de"])
+    ]
+    ...
+```
+
 ![Food ModelAdmin - Specific tabs 2](images/food-model-admin-specific-tabs-2.png)
 
 [wagtail]: https://docs.wagtail.org/en/stable/index.html

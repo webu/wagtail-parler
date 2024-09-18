@@ -26,6 +26,7 @@ class Migration(migrations.Migration):
                         auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
+                ("slug", models.SlugField(verbose_name="Slug")),
                 ("yum_rating", models.PositiveSmallIntegerField(verbose_name="Score de miam")),
                 ("vegetarian", models.BooleanField(default=False, verbose_name="Vegetarian")),
                 ("vegan", models.BooleanField(default=False, verbose_name="Vegan")),
@@ -45,6 +46,7 @@ class Migration(migrations.Migration):
                         auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
+                ("slug", models.SlugField(verbose_name="Slug")),
                 ("yum_rating", models.PositiveSmallIntegerField(verbose_name="Score de miam")),
                 ("vegetarian", models.BooleanField(default=False, verbose_name="Vegetarian")),
                 ("vegan", models.BooleanField(default=False, verbose_name="Vegan")),
@@ -64,6 +66,7 @@ class Migration(migrations.Migration):
                         auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
+                ("slug", models.SlugField(verbose_name="Slug")),
                 ("yum_rating", models.PositiveSmallIntegerField(verbose_name="Score de miam")),
                 ("vegetarian", models.BooleanField(default=False, verbose_name="Vegetarian")),
                 ("vegan", models.BooleanField(default=False, verbose_name="Vegan")),
@@ -83,6 +86,7 @@ class Migration(migrations.Migration):
                         auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
+                ("slug", models.SlugField(verbose_name="Slug")),
                 ("yum_rating", models.PositiveSmallIntegerField(verbose_name="Score de miam")),
                 ("vegetarian", models.BooleanField(default=False, verbose_name="Vegetarian")),
                 ("vegan", models.BooleanField(default=False, verbose_name="Vegan")),
@@ -102,6 +106,7 @@ class Migration(migrations.Migration):
                         auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
+                ("slug", models.SlugField(verbose_name="Slug")),
                 ("yum_rating", models.PositiveSmallIntegerField(verbose_name="Score de miam")),
                 ("vegetarian", models.BooleanField(default=False, verbose_name="Vegetarian")),
                 ("vegan", models.BooleanField(default=False, verbose_name="Vegan")),

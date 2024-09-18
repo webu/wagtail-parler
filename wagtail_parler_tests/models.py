@@ -31,6 +31,11 @@ class BaseFood(TranslatableModel):
         null=False,
         default=False,
     )
+    slug = models.SlugField(
+        verbose_name=_("Slug"),
+        blank=False,
+        null=False,
+    )
     translations = {
         "name": models.CharField(_("Nom"), max_length=255, blank=False, null=False),
         "summary": models.TextField(_("Résumé"), blank=False, null=False),

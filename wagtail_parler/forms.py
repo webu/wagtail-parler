@@ -5,7 +5,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Generator, Optional, Set, Tuple
+    from typing import Any
+    from typing import Dict
+    from typing import Generator
+    from typing import Optional
+    from typing import Set
+    from typing import Tuple
 
     from django.db.models import Model
 
@@ -14,6 +19,7 @@ from django.conf import settings
 from django.db import transaction
 from django.forms import Form
 from django.forms.models import fields_for_model
+
 from wagtail.admin.forms import WagtailAdminModelForm
 
 
@@ -29,7 +35,7 @@ class AutoParlerModelForm(Form):
     def __init__(self, *args: Tuple, **kwargs: Dict) -> None:
         kwargs.setdefault("initial", {})
         self._init_i18n_initials(kwargs.get("instance"), kwargs["initial"])
-        self.for_user = kwargs.pop("for_user", None)
+        self.for_user = kwargs.get("for_user", getattr(self, "for_user", None))
         super().__init__(*args, **kwargs)
         # All fields of others locales than the default one must NOT be required
         for conf in settings.PARLER_LANGUAGES[None][1:]:
