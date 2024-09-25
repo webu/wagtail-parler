@@ -1,7 +1,11 @@
+# 0.3.0 - 2024-09-26
+
+* Add a "LanguagesColumn" for SnippetViewset to view in the list which languages are currently translated for instance
+* Fix usage of non standard `translations` field
+
 # 0.2.4 - 2024-09-18
 
 * fix github actions pour qa control
-
 
 # 0.2.3 - 2024-09-18
 

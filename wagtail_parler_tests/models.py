@@ -128,3 +128,11 @@ class FoodWithSpecificEditHandler(BaseFood):
     class Meta:
         verbose_name = _("Nourriture - edit__handler with specific i18n handlers")
         verbose_name_plural = _("Nourritures - edit__handler with specific i18n handlers")
+
+
+class WeirdFood(BaseFood):
+    weird_translations = TranslatedFields(**BaseFood.translations)
+
+    class Meta:
+        verbose_name = _("Nourriture - non standard translations field")
+        verbose_name_plural = _("Nourritures - non standard translations field")

@@ -49,7 +49,8 @@ class AutoParlerModelForm(Form):
         """
         if not instance or not instance.pk:
             return None
-        for translation in instance.translations.all():
+        translations = getattr(instance, instance._parler_meta.root_rel_name)
+        for translation in translations.all():
             language_code = translation.language_code
             for field_name, i18n_field_name in self.get_localized_fieldnames(language_code):
                 if hasattr(translation, field_name):

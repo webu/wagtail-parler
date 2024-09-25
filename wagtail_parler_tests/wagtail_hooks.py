@@ -12,6 +12,7 @@ from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
 from wagtail_modeladmin.options import ModelAdmin
 from wagtail_modeladmin.options import modeladmin_register
+from wagtail_parler.admin.columns import LanguagesColumn
 
 # wagtail / parler
 from wagtail_parler.handlers import ParlerModelAdminMixin
@@ -23,6 +24,7 @@ from wagtail_parler_tests.models import FoodWithEditHandler
 from wagtail_parler_tests.models import FoodWithEmptyEditHandler
 from wagtail_parler_tests.models import FoodWithPanelsInsideModel
 from wagtail_parler_tests.models import FoodWithSpecificEditHandler
+from wagtail_parler_tests.models import WeirdFood
 
 specific_edit_handler = ObjectList(
     children=[
@@ -48,6 +50,10 @@ specific_edit_handler = ObjectList(
 
 class FoodAdmin(ParlerModelAdminMixin, ModelAdmin):
     model = Food
+
+
+class WeirdFoodAdmin(ParlerModelAdminMixin, ModelAdmin):
+    model = WeirdFood
 
 
 class FoodWithPanelsInsideModelAdmin(ParlerModelAdminMixin, ModelAdmin):
@@ -80,6 +86,7 @@ class FoodWithSpecificEditHandlerAdmin(ParlerModelAdminMixin, ModelAdmin):
 
 
 modeladmin_register(FoodAdmin)
+modeladmin_register(WeirdFoodAdmin)
 modeladmin_register(FoodWithPanelsInsideModelAdmin)
 modeladmin_register(FoodWithEditHandlerAdmin)
 modeladmin_register(FoodWithEmptyEditHandlerAdmin)
@@ -89,6 +96,12 @@ modeladmin_register(FoodWithSpecificEditHandlerAdmin)
 # Now, same things but  for Snippets
 class FoodAdminSnippet(ParlerSnippetAdminMixin, SnippetViewSet):
     model = Food
+
+
+# Now, same things but  for Snippets
+class WeirdFoodAdminSnippet(ParlerSnippetAdminMixin, SnippetViewSet):
+    model = WeirdFood
+    list_display = ("slug", "name", LanguagesColumn("weird_translations"))
 
 
 class FoodWithPanelsInsideModelAdminSnippet(ParlerSnippetAdminMixin, SnippetViewSet):
@@ -121,6 +134,7 @@ class FoodWithSpecificEditHandlerAdminSnippet(ParlerSnippetAdminMixin, SnippetVi
 
 
 register_snippet(FoodAdminSnippet)
+register_snippet(WeirdFoodAdminSnippet)
 register_snippet(FoodWithPanelsInsideModelAdminSnippet)
 register_snippet(FoodWithEditHandlerAdminSnippet)
 register_snippet(FoodWithEmptyEditHandlerAdminSnippet)

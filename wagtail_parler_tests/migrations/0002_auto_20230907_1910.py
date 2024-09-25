@@ -34,6 +34,24 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
+            model_name="weirdfoodtranslation",
+            name="qa",
+            field=wagtail.fields.StreamField(
+                [
+                    (
+                        "QaBlock",
+                        wagtail.blocks.StructBlock(
+                            [("text", wagtail.blocks.TextBlock(label="Question"))], label="QA"
+                        ),
+                    )
+                ],
+                blank=True,
+                null=True,
+                use_json_field=True,
+                verbose_name="Some QA",
+            ),
+        ),
+        migrations.AddField(
             model_name="foodwithedithandlertranslation",
             name="qa",
             field=wagtail.fields.StreamField(
