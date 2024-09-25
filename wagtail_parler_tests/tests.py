@@ -21,6 +21,7 @@ from bs4 import NavigableString
 from bs4 import Tag
 
 from wagtail_parler_tests.models import Food
+from wagtail_parler_tests.models import WeirdFood
 
 __all__ = ["WagtailParlerModelAdminTests", "WagtailParlerSnippetsTests"]
 
@@ -59,6 +60,47 @@ EXTRA_SETTINGS = {
             },
         },
     )
+}
+
+
+GELY_DATA = {
+    None: {
+        "slug": "gely",
+        "yum_rating": "3",
+        "vegetarian": "on",
+        "vegan": "on",
+    },
+    "fr": {
+        "translations_fr_name": "Gelée",
+        "translations_fr_summary": "Summary FR",
+        "translations_fr_content": "Content FR",
+        "translations_fr_qa-count": 1,
+        "translations_fr_qa-0-deleted": "",
+        "translations_fr_qa-0-order": 0,
+        "translations_fr_qa-0-type": "QaBlock",
+        "translations_fr_qa-0-id": "8c23eadb-60e0-4271-831d-332dd33ce36b",
+        "translations_fr_qa-0-value-text": "Pouvez-vous emmener une « Jelly » dans un avion ?",
+    },
+    "en": {
+        "translations_en_name": "Jelly",
+        "translations_en_summary": "Summary EN",
+        "translations_en_content": "Content EN",
+        "translations_en_qa-count": 1,
+        "translations_en_qa-0-deleted": "",
+        "translations_en_qa-0-order": 0,
+        "translations_en_qa-0-type": "QaBlock",
+        "translations_en_qa-0-id": "bbc8985f-f249-4ce2-9cab-cee966ffb4aa",
+        "translations_en_qa-0-value-text": "Can you bring a Jelly in a plane ?",
+    },
+    "es": {
+        "translations_es_name": "Jelly ES",
+        "translations_es_qa-count": 1,
+        "translations_es_qa-0-deleted": "",
+        "translations_es_qa-0-order": 0,
+        "translations_es_qa-0-type": "QaBlock",
+        "translations_es_qa-0-id": "d2d0ab62-6946-4764-947a-77f58ebfd7ae",
+        "translations_es_qa-0-value-text": "QA ES",
+    },
 }
 
 
@@ -304,42 +346,59 @@ class WagtailParlerBaseTests:
         edit_url = self._get_admin_url("wagtail_parler_tests", "food", "edit", 1)
         list_url = self._get_admin_url("wagtail_parler_tests", "food")
         data = {
-            "slug": "gely",
-            "yum_rating": "3",
-            "vegetarian": "on",
-            "vegan": "on",
-            "translations_fr_name": "Gelée",
-            "translations_fr_summary": "Summary FR",
-            "translations_fr_content": "Content FR",
-            "translations_fr_qa-count": 1,
-            "translations_fr_qa-0-deleted": "",
-            "translations_fr_qa-0-order": 0,
-            "translations_fr_qa-0-type": "QaBlock",
-            "translations_fr_qa-0-id": "8c23eadb-60e0-4271-831d-332dd33ce36b",
-            "translations_fr_qa-0-value-text": "Pouvez-vous emmener une « Jelly » dans un avion ?",
-            # EN
-            "translations_en_name": "Jelly",
-            "translations_en_summary": "Summary EN",
-            "translations_en_content": "Content EN",
-            "translations_en_qa-count": 1,
-            "translations_en_qa-0-deleted": "",
-            "translations_en_qa-0-order": 0,
-            "translations_en_qa-0-type": "QaBlock",
-            "translations_en_qa-0-id": "bbc8985f-f249-4ce2-9cab-cee966ffb4aa",
-            "translations_en_qa-0-value-text": "Can you bring a Jelly in a plane ?",
-            # ES
-            "translations_es_name": "Jelly ES",
-            "translations_es_qa-count": 1,
-            "translations_es_qa-0-deleted": "",
-            "translations_es_qa-0-order": 0,
-            "translations_es_qa-0-type": "QaBlock",
-            "translations_es_qa-0-id": "d2d0ab62-6946-4764-947a-77f58ebfd7ae",
-            "translations_es_qa-0-value-text": "QA ES",
+            **GELY_DATA[None],
+            **GELY_DATA["fr"],
+            **GELY_DATA["en"],
+            **GELY_DATA["es"],
         }
         resp = self.client.post(edit_url, data)
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(resp.url, list_url)
         jelly = Food.objects.get(pk=1)
+        self.assertIn("es", jelly.get_available_languages())
+        self.assertEqual(jelly.get_translation("es").name, "Jelly ES")
+        self.assertEqual(
+            jelly.get_translation("es").qa.raw_data[0]["value"]["text"],
+            "QA ES",
+        )
+
+    def test_non_standard_translations_field(self: TestCase):
+        add_url = self._get_admin_url("wagtail_parler_tests", "weirdfood", "add")
+        soup = self._get_soup(add_url)
+        expected_tabs = [
+            "Untranslated data",
+            "French",
+            "English",
+            "Spanish",
+        ]
+        self._check_tabs(soup, expected_tabs)
+        self._check_tab(
+            soup,
+            "untranslated_data",
+            [
+                "panel-child-untranslated_data-yum_rating-section",
+                "panel-child-untranslated_data-vegetarian-section",
+                "panel-child-untranslated_data-vegan-section",
+                "panel-child-untranslated_data-slug-section",
+            ],
+            {
+                "yum_rating": {},
+                "vegetarian": {},
+                "vegan": {},
+                "slug": {},
+            },
+        )
+        list_url = self._get_admin_url("wagtail_parler_tests", "weirdfood")
+        data = {
+            **GELY_DATA[None],
+            **GELY_DATA["fr"],
+            **GELY_DATA["en"],
+            **GELY_DATA["es"],
+        }
+        resp = self.client.post(add_url, data)
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.url, list_url)
+        jelly = WeirdFood.objects.get(slug=GELY_DATA[None]["slug"])
         self.assertIn("es", jelly.get_available_languages())
         self.assertEqual(jelly.get_translation("es").name, "Jelly ES")
         self.assertEqual(
@@ -355,30 +414,11 @@ class WagtailParlerBaseTests:
         edit_url = self._get_admin_url("wagtail_parler_tests", "food", "edit", 1)
         list_url = self._get_admin_url("wagtail_parler_tests", "food")
         data = {
-            "slug": "gely",
-            "yum_rating": "3",
-            "vegetarian": "on",
-            "vegan": "on",
-            "translations_fr_name": "Gelée",
-            "translations_fr_summary": "Summary FR",
-            "translations_fr_content": "Content FR",
-            "translations_fr_qa-count": 1,
-            "translations_fr_qa-0-deleted": "",
-            "translations_fr_qa-0-order": 0,
-            "translations_fr_qa-0-type": "QaBlock",
-            "translations_fr_qa-0-id": "8c23eadb-60e0-4271-831d-332dd33ce36b",
-            "translations_fr_qa-0-value-text": "Pouvez-vous emmener une « Jelly » dans un avion ?",
-            # EN
+            **GELY_DATA[None],
+            **GELY_DATA["fr"],
+            **GELY_DATA["en"],
             "translations_en_name": "Jelly updated",
-            "translations_en_summary": "Summary EN",
-            "translations_en_content": "Content EN",
-            "translations_en_qa-count": 1,
-            "translations_en_qa-0-deleted": "",
-            "translations_en_qa-0-order": 0,
-            "translations_en_qa-0-type": "QaBlock",
-            "translations_en_qa-0-id": "bbc8985f-f249-4ce2-9cab-cee966ffb4aa",
             "translations_en_qa-0-value-text": "Can you bring a Jelly in a plane ? Updated",
-            # ES
             "translations_es_qa-count": 0,
         }
         resp = self.client.post(edit_url, data)
@@ -451,3 +491,17 @@ class WagtailParlerModelAdminTests(WagtailParlerBaseTests, TestCase):
 
 class WagtailParlerSnippetsTests(WagtailParlerBaseTests, TestCase):
     admin_interface = "snippets"
+
+    def test_translations_column(self: TestCase):
+        soup = self._get_admin_soup("wagtail_parler_tests", "weirdfood")
+        title_content = soup.find("td", {"class": "title"}).text.strip()
+        self.assertIn("chococheese", title_content)
+        languages_cell = soup.find("td", {"class": "languages"})
+        translated = languages_cell.select("span.w-status.translated")
+        self.assertEqual(len(translated), 1)
+        lang = translated[0].text.strip()
+        self.assertEqual(lang, "FR")
+        untranslated = languages_cell.select("span.w-status.untranslated")
+        self.assertEqual(len(untranslated), 2)
+        langs = [lang.text.strip() for lang in untranslated]
+        self.assertEqual(langs, ["EN", "ES"])

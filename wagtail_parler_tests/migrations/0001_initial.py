@@ -38,6 +38,26 @@ class Migration(migrations.Migration):
             bases=(parler.models.TranslatableModelMixin, models.Model),
         ),
         migrations.CreateModel(
+            name="WeirdFood",
+            fields=[
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("slug", models.SlugField(verbose_name="Slug")),
+                ("yum_rating", models.PositiveSmallIntegerField(verbose_name="Score de miam")),
+                ("vegetarian", models.BooleanField(default=False, verbose_name="Vegetarian")),
+                ("vegan", models.BooleanField(default=False, verbose_name="Vegan")),
+            ],
+            options={
+                "verbose_name": "Nourriture - non standard translations field",
+                "verbose_name_plural": "Nourritures - non standard translations field",
+            },
+            bases=(parler.models.TranslatableModelMixin, models.Model),
+        ),
+        migrations.CreateModel(
             name="FoodWithEditHandler",
             fields=[
                 (
@@ -297,6 +317,43 @@ class Migration(migrations.Migration):
             options={
                 "verbose_name": "Nourriture - auto edit handlers Translation",
                 "db_table": "wagtail_parler_tests_food_translation",
+                "db_tablespace": "",
+                "managed": True,
+                "default_permissions": (),
+                "unique_together": {("language_code", "master")},
+            },
+            bases=(parler.models.TranslatedFieldsModelMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name="WeirdFoodTranslation",
+            fields=[
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "language_code",
+                    models.CharField(db_index=True, max_length=15, verbose_name="Language"),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Nom")),
+                ("summary", models.TextField(verbose_name="Résumé")),
+                ("content", models.TextField(verbose_name="Contenu")),
+                (
+                    "master",
+                    parler.fields.TranslationsForeignKey(
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="weird_translations",
+                        to="wagtail_parler_tests.weirdfood",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Nourriture - non standard translations field Translation",
+                "db_table": "wagtail_parler_tests_weirdfood_translation",
                 "db_tablespace": "",
                 "managed": True,
                 "default_permissions": (),

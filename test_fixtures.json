@@ -164,5 +164,26 @@
                 8
             ]
         }
+    },
+    {
+        "model": "wagtail_parler_tests.weirdfoodtranslation",
+        "pk": 1,
+        "fields": {
+            "language_code": "fr",
+            "name": "Fromage au chocolat",
+            "summary": "Summary FR",
+            "content": "Content FR",
+            "master": 1
+        }
+    },
+    {
+        "model": "wagtail_parler_tests.weirdfood",
+        "pk": 1,
+        "fields": {
+            "slug": "chococheese",
+            "yum_rating": 3,
+            "vegetarian": true,
+            "vegan": false
+        }
     }
 ]

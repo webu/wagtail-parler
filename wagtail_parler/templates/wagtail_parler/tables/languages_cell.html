@@ -1,0 +1,11 @@
+{% load l10n wagtailadmin_tags %}
+{% load wagtailcore_tags %}
+<td class="{% if column.classname %}{{ column.classname }} {% endif %}languages">
+    <div class="languages-wrapper">
+        {% for code, language in value.items %}
+            <span title="{{ language.label }}" class="w-status  w-status--{% if language.untranslated %}secondary un{% else %}primary {% endif %}translated {% if language.current%}current{% endif %} lang-{{ language.code }}">
+                {{ code.upper }}
+            </span>
+        {% endfor %}
+    </div>
+</td>

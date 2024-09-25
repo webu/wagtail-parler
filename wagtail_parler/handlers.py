@@ -103,9 +103,9 @@ class ParlerAdminWagtailMixin:
         will have their field_name renamed with `translations_%(language_code)s_%(field_name)s`
         if they exists in the translation Model.
         """
-        # TODO get I18nModel in safer way because maybe it'ns not called translations
-        I18nModel = self.model._meta.get_field("translations").related_model
-        translated_fields = [*fields_for_model(I18nModel).keys()]
+        translated_fields = []
+        for I18nModel in self.model._parler_meta.get_all_models():
+            translated_fields += [*fields_for_model(I18nModel).keys()]
         displayed_fields = set()
         if not base_handler or not getattr(base_handler, "children"):
             children = []
