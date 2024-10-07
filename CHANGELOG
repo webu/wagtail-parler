@@ -1,3 +1,9 @@
+# 0.3.1 - 2024-10-07
+
+* Fix the lose of widget which was added into FieldPanel kwargs 
+  (eg: `FieldPanel("slug", wiget=SlugInput)`)
+
+
 # 0.3.0 - 2024-09-26
 
 * Add a "LanguagesColumn" for SnippetViewset to view in the list which languages are currently translated for instance

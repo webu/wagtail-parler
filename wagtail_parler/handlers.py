@@ -185,9 +185,11 @@ class ParlerAdminWagtailMixin:
             and formfield_for_dbfield.__func__.__qualname__ != "ModelViewSet.formfield_for_dbfield"
         ):
             main_form_meta_attrs["formfield_callback"] = self.formfield_for_dbfield
+        form_options = base_handlers.bind_to_model(self.model).get_form_options()
+        form_options["fields"] = displayed_fields
         base_form_class = build_translations_form(
             self.model,
-            fields_for_model_kwargs={"fields": displayed_fields},
+            fields_for_model_kwargs=form_options,
             base_form=getattr(self, "parler_base_form_class", None),
         )
         return TabbedInterface(handlers, base_form_class=base_form_class)
