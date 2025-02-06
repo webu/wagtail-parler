@@ -1,3 +1,7 @@
+# 0.3.2 - 2025-02-06
+
+* fix: exception when using RichText and preview
+
 # 0.3.1 - 2024-10-07
 
 * Fix the lose of widget which was added into FieldPanel kwargs 

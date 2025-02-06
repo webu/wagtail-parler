@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 # Standard libs
+import re
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -21,6 +22,7 @@ from django.forms import Form
 from django.forms.models import fields_for_model
 
 from wagtail.admin.forms import WagtailAdminModelForm
+from wagtail.admin.rich_text.editors.draftail import DraftailRichTextArea
 
 
 class AutoParlerModelForm(Form):
@@ -84,7 +86,6 @@ class AutoParlerModelForm(Form):
         obj = self.instance  # type: ignore
         trans_exists = obj.has_translation(locale)
         data = self.cleaned_data_for_locales.get(locale)
-
         if not data or all(not d for d in data.values()):
             return None, obj.delete_translation(locale) if trans_exists else 0
         return (
@@ -101,12 +102,18 @@ class AutoParlerModelForm(Form):
         """
         Prepare cleaned_data_for_locales of translated fields
         """
+        rich_text_re = re.compile(r'^<p data-block-key="[^"]*"></p>$')
         self.cleaned_data_for_locales = {}
         for conf in settings.PARLER_LANGUAGES[None]:
             data = self.cleaned_data_for_locales[conf["code"]] = {}
             for field_name, i18n_field_name in self.get_localized_fieldnames(conf["code"]):
                 if i18n_field_name in self.cleaned_data:  # type: ignore
-                    data[field_name] = self.cleaned_data[i18n_field_name]  # type: ignore
+                    if isinstance(
+                        self.fields[i18n_field_name].widget, DraftailRichTextArea
+                    ) and rich_text_re.search(self.cleaned_data[i18n_field_name]):
+                        data[field_name] = ""  # it's only the default empty <p> tag
+                    else:
+                        data[field_name] = self.cleaned_data[i18n_field_name]  # type: ignore
         return super().clean()  # type: ignore
 
     @transaction.atomic
