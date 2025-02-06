@@ -122,8 +122,9 @@ class AutoParlerModelForm(Form):
         Save the instance and it's translations
         """
         instance = super().save(*args, **kwargs)  # type: ignore
-        for conf in settings.PARLER_LANGUAGES[None]:
-            self._save_locale(conf["code"])
+        if kwargs.get("commit", True):
+            for conf in settings.PARLER_LANGUAGES[None]:
+                self._save_locale(conf["code"])
         return instance
 
 
