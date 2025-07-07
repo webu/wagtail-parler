@@ -190,7 +190,7 @@ class ParlerAdminWagtailMixin:
         form_options["fields"] = displayed_fields
         if WAGTAIL_VERSION[0] >= 7:
             # wagtail 7 add "defer_required_on_fields"
-            form_options.pop("defer_required_on_fields")
+            form_options.pop("defer_required_on_fields", None)
         base_form_class = build_translations_form(
             self.model,
             fields_for_model_kwargs=form_options,
