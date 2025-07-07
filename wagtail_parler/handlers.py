@@ -22,6 +22,7 @@ from django.forms.models import fields_for_model
 from django.utils.translation import gettext_lazy as _
 
 # Third Party
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin.panels import FieldPanel
 from wagtail.admin.panels import ObjectList
 from wagtail.admin.panels import TabbedInterface
@@ -187,6 +188,9 @@ class ParlerAdminWagtailMixin:
             main_form_meta_attrs["formfield_callback"] = self.formfield_for_dbfield
         form_options = base_handlers.bind_to_model(self.model).get_form_options()
         form_options["fields"] = displayed_fields
+        if WAGTAIL_VERSION[0] >= 7:
+            # wagtail 7 add "defered_required_on_fields"
+            form_options.pop("defered_required_on_fields")
         base_form_class = build_translations_form(
             self.model,
             fields_for_model_kwargs=form_options,
