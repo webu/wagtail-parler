@@ -12,6 +12,7 @@ TIME_ZONE = "Europe/Paris"
 
 # add our apps and remove wagtail test apps
 INSTALLED_APPS = [
+    "wagtail.users",
     "wagtail_parler",
     "wagtail_parler_tests",
     "parler",
