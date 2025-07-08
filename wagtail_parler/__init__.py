@@ -1,2 +1,2 @@
-__version__ = "0.4.0"
+__version__ = "0.4.2"
 default_app_config = "wagtail_parler.apps.WagtailParlerConfig"
