@@ -54,8 +54,8 @@ jobs:
             experimental: false
           - python: '3.12'
             django: '"git+https://github.com/django/django.git@main#egg=Django"'
-            wagtail: '"git+https://github.com/wagtail/wagtail.git@main#egg=wagtail" "wagtail-modeladmin>=1.0,<2.0"'
-            coverage: 'py3.11_django-main_wagtail-main'
+            wagtail: '"git+https://github.com/wagtail/wagtail.git@main#egg=wagtail" "wagtail-modeladmin>=2.0,<3.0"'
+            coverage: 'py3.12_django-main_wagtail-main'
             experimental: true
     steps:
       - uses: actions/checkout@v3
