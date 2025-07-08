@@ -10,9 +10,11 @@ BASE_PATH = os.path.join(os.path.dirname(__file__), "..")
 USE_TZ = True
 TIME_ZONE = "Europe/Paris"
 
+# In some version of wagtail (>7), "wagtail.users" is added only if some settings are set.
+if "wagtail.users" not in INSTALLED_APPS:
+    INSTALLED_APPS += ["wagtail.users"]
 # add our apps and remove wagtail test apps
 INSTALLED_APPS = [
-    "wagtail.users",
     "wagtail_parler",
     "wagtail_parler_tests",
     "parler",
