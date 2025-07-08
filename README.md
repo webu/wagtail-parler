@@ -26,8 +26,8 @@ wagtail's snippets.
 
 This app is tested to runs with:
 
-* Django 4.2, 5.0
-* Wagtail 5.0, 5.1, 5.2, 6.0, 6.1, 6.2
+* Django 4.2, 5.0, 5.2
+* Wagtail 5.0, 5.1, 5.2, 6.0, 6.1, 6.2, 7.0
 * Parler 2.3 (probably older ones to, it's just not tested)
 * Python 3.9, 3.11
 
@@ -65,11 +65,14 @@ Then, in settings.py, add `wagtail_parler` to the installed apps.
 # settings.py
 
 INSTALLED_APPS = [
+    # "wagtail.users" # for wagtail >= 7
     # …
     "wagtail_parler",
     # …
 ]
 ```
+
+ATTENTION! Since wagtail 7, you need also to add `wagtail.users` in the installed app if not already done!
 
 ## Basic Usage
 
