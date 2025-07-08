@@ -2,8 +2,8 @@
 
 [![Stable Version](https://img.shields.io/pypi/v/wagtail-parler?color=blue)](https://pypi.org/project/wagtail-parler/)
 ![](https://img.shields.io/badge/python-3.9%20to%203.11-blue)
-![](https://img.shields.io/badge/django-4.2%20to%205.0-blue)
-![](https://img.shields.io/badge/wagtail-5.0%20to%206.2-blue)
+![](https://img.shields.io/badge/django-4.2%20to%205.2-blue)
+![](https://img.shields.io/badge/wagtail-5.0%20to%207.0-blue)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 ![](https://img.shields.io/badge/coverage-100%25-green)
 [![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
