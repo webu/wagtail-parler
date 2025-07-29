@@ -11,7 +11,7 @@
 [![semver](https://img.shields.io/badge/semver-2.0.0-green)](https://semver.org/)
 [![Documentation Status](https://readthedocs.org/projects/wagtail-parler/badge/?version=latest)](https://wagtail-parler.readthedocs.io/en/latest/?badge=latest)
 
-Brings "omelette du fromage" 🧀 from parler into wagtail 🐦 for your custom models 
+Brings "omelette du fromage" 🧀 from [parler](https://github.com/django-parler/django-parler/) into [wagtail](https://github.com/wagtail/wagtail) 🐦 for your custom models 
 (via modeladmin or wagtail snippets)
 
 ![Wagtail Parler Logo](https://raw.githubusercontent.com/webu/wagtail-parler/main/docs/source/images/wagtail-parler.png)
