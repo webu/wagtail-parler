@@ -1,0 +1,4 @@
+recursive-include wagtail_neuralyzer/static *
+recursive-include wagtail_neuralyzer/locale *
+recursive-include wagtail_neuralyzer/templates *
+
