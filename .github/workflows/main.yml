@@ -52,6 +52,7 @@ jobs:
             wagtail: '"git+https://github.com/wagtail/wagtail.git@main#egg=wagtail" "wagtail-modeladmin>=2.0,<3.0"'
             coverage: 'py3.12_django-main_wagtail-main'
             experimental: true
+    continue-on-error: ${{ matrix.experimental }}
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python }}
