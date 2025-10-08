@@ -93,8 +93,15 @@ class AutoParlerModelForm(Form):
         locale_cache = obj._translations_cache[i18n_model]
         locale_cache.pop(locale, None)
         data = self.cleaned_data_for_locales.get(locale)
+        original_state = obj._state.adding
         if not data or all(not d for d in data.values()):
-            locale_cache[locale] = None
+            obj._state.adding = (
+                True  # Hack to avoid fetching from DB in case we empty a translation
+            )
+            # now, parler will believe there are no translations for this local and will use
+            # fallbacks if available
+            locale_cache[locale] = obj._get_translated_model(locale, use_fallback=True)
+            obj._state.adding = original_state
             return []
         return [t for t in obj._set_translated_fields(locale, **data)]
 

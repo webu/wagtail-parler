@@ -506,29 +506,17 @@ class WagtailParlerSnippetsTests(WagtailParlerBaseTests, TestCase):
         langs = [lang.text.strip() for lang in untranslated]
         self.assertEqual(langs, ["EN", "ES"])
 
-    def test_preview_locale_dependent(self) -> None:
+    def test_preview_locale_dependent_update_existing(self) -> None:
         """checks that preview display correct localized version of the instance"""
         jelly = Food.objects.get(pk=1)
-        available_languages = jelly.get_available_languages()
-        self.assertIn("en", available_languages)
-        self.assertIn("fr", available_languages)
-        self.assertEqual(jelly.get_translation("en").name, "Jelly")
-        self.assertEqual(jelly.get_translation("fr").name, "Gelée")
-        # http://127.0.0.1:8000/fr/cms/snippets/wagtail_parler_tests/food/preview/1/
+        self.assertEqual(set(jelly.get_available_languages()), {"fr", "en"})
         preview_url = self._get_admin_url("wagtail_parler_tests", "food", "preview", 1)
         data = {
-            "slug": "gely",
-            "yum_rating": "3",
-            "vegetarian": "on",
-            "vegan": "on",
+            **GELY_DATA[None],
+            **GELY_DATA["fr"],
+            **GELY_DATA["en"],
             "translations_en_name": "Jelly updated",
-            "translations_en_summary": "Summary EN",
-            "translations_en_content": "Content EN",
-            "translations_en_qa-count": 0,
             "translations_fr_name": "Gelée modifiée",
-            "translations_fr_summary": "Summary FR modifié",
-            "translations_fr_content": "Content FR modifié",
-            "translations_fr_qa-count": 0,
             "translations_es_name": "",
             "translations_es_summary": "",
             "translations_es_content": "",
@@ -541,11 +529,102 @@ class WagtailParlerSnippetsTests(WagtailParlerBaseTests, TestCase):
         self.assertTrue(resp.json()["is_available"])
         resp = self.client.get(preview_url, data)
         self.assertContains(resp, "<h1>Jelly updated</h1>", count=1, status_code=200)
+
         data["wagtail_parler_locale_tab"] = "fr"
         resp = self.client.post(preview_url, data)
         resp = self.client.get(preview_url, data)
         self.assertContains(resp, "<h1>Gelée modifiée</h1>", count=1, status_code=200)
+
+        data["wagtail_parler_locale_tab"] = "es"
+        resp = self.client.post(preview_url, data)
+        resp = self.client.get(preview_url, data)
+
+    def test_preview_locale_dependent_no_translation(self) -> None:
+        """checks that preview display correct localized version of the instance"""
+        jelly = Food.objects.get(pk=1)
+        self.assertEqual(set(jelly.get_available_languages()), {"fr", "en"})
+        preview_url = self._get_admin_url("wagtail_parler_tests", "food", "preview", 1)
+        data = {
+            **GELY_DATA[None],
+            **GELY_DATA["fr"],
+            **GELY_DATA["en"],
+            "translations_en_name": "Jelly updated",
+            "translations_fr_name": "Gelée modifiée",
+            "translations_es_name": "",
+            "translations_es_summary": "",
+            "translations_es_content": "",
+            "translations_es_qa-count": 0,
+            "wagtail_parler_locale_tab": "es",
+        }
+        resp = self.client.post(preview_url, data)
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(resp.json()["is_valid"])
+        self.assertTrue(resp.json()["is_available"])
+        resp = self.client.get(preview_url, data)
+        # spanish version should not have preview, we fallback on FR version
+        self.assertContains(resp, "<h1>Gelée modifiée</h1>", count=1, status_code=200)
+
         # jelly should stay unchanged
         jelly = Food.objects.get(pk=1)
         self.assertEqual(jelly.get_translation("en").name, "Jelly")
         self.assertEqual(jelly.get_translation("fr").name, "Gelée")
+        self.assertEqual(set(jelly.get_available_languages()), {"fr", "en"})
+
+    def test_preview_locale_dependent_new_translation(self) -> None:
+        """checks that preview display correct localized version of the instance"""
+        jelly = Food.objects.get(pk=1)
+        self.assertEqual(set(jelly.get_available_languages()), {"fr", "en"})
+        preview_url = self._get_admin_url("wagtail_parler_tests", "food", "preview", 1)
+        data = {
+            **GELY_DATA[None],
+            **GELY_DATA["fr"],
+            **GELY_DATA["en"],
+            **GELY_DATA["es"],
+            "wagtail_parler_locale_tab": "es",
+        }
+        resp = self.client.post(preview_url, data)
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(resp.json()["is_valid"])
+        self.assertTrue(resp.json()["is_available"])
+        resp = self.client.get(preview_url, data)
+        # spanish version should have a preview
+        self.assertContains(resp, "<h1>Jelly ES</h1>", count=1, status_code=200)
+
+        # jelly should stay unchanged
+        jelly = Food.objects.get(pk=1)
+        self.assertEqual(jelly.get_translation("en").name, "Jelly")
+        self.assertEqual(jelly.get_translation("fr").name, "Gelée")
+        self.assertEqual(set(jelly.get_available_languages()), {"fr", "en"})
+
+    def test_preview_locale_dependent_remove_translation(self) -> None:
+        """checks that preview display correct localized version of the instance"""
+        jelly = Food.objects.get(pk=1)
+        self.assertEqual(set(jelly.get_available_languages()), {"fr", "en"})
+        preview_url = self._get_admin_url("wagtail_parler_tests", "food", "preview", 1)
+        data = {
+            **GELY_DATA[None],
+            **GELY_DATA["fr"],
+            "translations_fr_name": "Gelée modifiée",
+            "translations_en_name": "",
+            "translations_en_summary": "",
+            "translations_en_content": "",
+            "translations_en_qa-count": 0,
+            "translations_es_name": "",
+            "translations_es_summary": "",
+            "translations_es_content": "",
+            "translations_es_qa-count": 0,
+            "wagtail_parler_locale_tab": "en",
+        }
+        resp = self.client.post(preview_url, data)
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(resp.json()["is_valid"])
+        self.assertTrue(resp.json()["is_available"])
+        resp = self.client.get(preview_url, data)
+        # english version should not have preview anymore, we fallback on FR version
+        self.assertContains(resp, "<h1>Gelée modifiée</h1>", count=1, status_code=200)
+
+        # jelly should stay unchanged
+        jelly = Food.objects.get(pk=1)
+        self.assertEqual(jelly.get_translation("en").name, "Jelly")
+        self.assertEqual(jelly.get_translation("fr").name, "Gelée")
+        self.assertEqual(set(jelly.get_available_languages()), {"fr", "en"})
