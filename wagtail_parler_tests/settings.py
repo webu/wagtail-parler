@@ -20,7 +20,8 @@ INSTALLED_APPS = [
     "parler",
     "wagtail_modeladmin",
 ] + [app for app in INSTALLED_APPS if not app.startswith("wagtail.test")]
-
+if "wagtail.users" not in INSTALLED_APPS:
+    INSTALLED_APPS.append("wagtail.users")
 MIDDLEWARE = [m for m in MIDDLEWARE if not m.startswith("wagtail.test")]  # remove test middleware
 TEMPLATES.pop(1)  # remove jinja via wagtail.test dir
 TEMPLATES[0]["OPTIONS"]["context_processors"] = [

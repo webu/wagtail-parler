@@ -9,13 +9,14 @@ from wagtail import blocks
 from wagtail.admin.panels import FieldPanel
 from wagtail.admin.panels import ObjectList
 from wagtail.fields import StreamField
+from wagtail.models import PreviewableMixin
 
 
 class QABlock(blocks.StructBlock):
     text = blocks.TextBlock(label="Question")
 
 
-class BaseFood(TranslatableModel):
+class BaseFood(PreviewableMixin, TranslatableModel):
     yum_rating = models.PositiveSmallIntegerField(
         verbose_name=_("Score de miam"), blank=False, null=False
     )
@@ -59,6 +60,9 @@ class BaseFood(TranslatableModel):
 
     def __str__(self) -> str:
         return self.safe_translation_getter("name", any_language=True)
+
+    def get_preview_template(self, request, mode_name):
+        return "wagtail_parler_tests/food_preview.html"
 
 
 class Food(BaseFood):

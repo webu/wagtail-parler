@@ -26,8 +26,8 @@ wagtail's snippets.
 
 This app is tested to runs with:
 
-* Django 4.2, 5.0, 5.2
-* Wagtail 5.0, 5.1, 5.2, 6.0, 6.1, 6.2, 7.0
+* Django 4.2, 5.2
+* Wagtail 5.0, 5.1, 5.2, 6.3, 7.0
 * Parler 2.3 (probably older ones to, it's just not tested)
 * Python 3.9, 3.11
 
@@ -104,7 +104,10 @@ class FoodAdmin(ParlerModelAdminMixin, ModelAdmin):
 
 modeladmin_register(FoodAdmin)
 ```
+## Doest it support `PreviewableMixin` ?
 
+Yes it does. When user change the translation tab, preview is updated with 
+translated data from the form. Same behaviour when a data is updated of course. 
 
 ## Extra 🧀🐦
 

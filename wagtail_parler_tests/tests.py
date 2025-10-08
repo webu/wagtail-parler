@@ -505,3 +505,47 @@ class WagtailParlerSnippetsTests(WagtailParlerBaseTests, TestCase):
         self.assertEqual(len(untranslated), 2)
         langs = [lang.text.strip() for lang in untranslated]
         self.assertEqual(langs, ["EN", "ES"])
+
+    def test_preview_locale_dependent(self) -> None:
+        """checks that preview display correct localized version of the instance"""
+        jelly = Food.objects.get(pk=1)
+        available_languages = jelly.get_available_languages()
+        self.assertIn("en", available_languages)
+        self.assertIn("fr", available_languages)
+        self.assertEqual(jelly.get_translation("en").name, "Jelly")
+        self.assertEqual(jelly.get_translation("fr").name, "Gelée")
+        # http://127.0.0.1:8000/fr/cms/snippets/wagtail_parler_tests/food/preview/1/
+        preview_url = self._get_admin_url("wagtail_parler_tests", "food", "preview", 1)
+        data = {
+            "slug": "gely",
+            "yum_rating": "3",
+            "vegetarian": "on",
+            "vegan": "on",
+            "translations_en_name": "Jelly updated",
+            "translations_en_summary": "Summary EN",
+            "translations_en_content": "Content EN",
+            "translations_en_qa-count": 0,
+            "translations_fr_name": "Gelée modifiée",
+            "translations_fr_summary": "Summary FR modifié",
+            "translations_fr_content": "Content FR modifié",
+            "translations_fr_qa-count": 0,
+            "translations_es_name": "",
+            "translations_es_summary": "",
+            "translations_es_content": "",
+            "translations_es_qa-count": 0,
+            "wagtail_parler_locale_tab": "en",
+        }
+        resp = self.client.post(preview_url, data)
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(resp.json()["is_valid"])
+        self.assertTrue(resp.json()["is_available"])
+        resp = self.client.get(preview_url, data)
+        self.assertContains(resp, "<h1>Jelly updated</h1>", count=1, status_code=200)
+        data["wagtail_parler_locale_tab"] = "fr"
+        resp = self.client.post(preview_url, data)
+        resp = self.client.get(preview_url, data)
+        self.assertContains(resp, "<h1>Gelée modifiée</h1>", count=1, status_code=200)
+        # jelly should stay unchanged
+        jelly = Food.objects.get(pk=1)
+        self.assertEqual(jelly.get_translation("en").name, "Jelly")
+        self.assertEqual(jelly.get_translation("fr").name, "Gelée")

@@ -1,6 +1,8 @@
 # Future imports
 from __future__ import annotations
 
+from copy import deepcopy
+
 # Standard libs
 import re
 from typing import TYPE_CHECKING
@@ -9,6 +11,7 @@ if TYPE_CHECKING:
     from typing import Any
     from typing import Dict
     from typing import Generator
+    from typing import List
     from typing import Optional
     from typing import Set
     from typing import Tuple
@@ -21,6 +24,7 @@ from django.db import transaction
 from django.forms import Form
 from django.forms.models import fields_for_model
 
+from parler import appsettings as parler_settings
 from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.admin.rich_text.editors.draftail import DraftailRichTextArea
 
@@ -70,6 +74,30 @@ class AutoParlerModelForm(Form):
             i18n_field_name = "translations_%s_%s" % (locale, field_name)
             yield (field_name, i18n_field_name)
 
+    def _set_locale(self, locale: str) -> List:
+        """
+        Depending sent data, will save/create/delete translation for the given language code
+
+        Args:
+            locale (str): locale code of translation to save/create/delete
+
+        Returns:
+            (None|True|False, int|instance|[instances]: for deletion, will return None and the
+                number of translations deleted
+                for creation, will return True and the created of translation
+                for update, will return False and the updated of translation
+        """
+        obj = self.instance  # type: ignore
+        i18n_meta = obj._parler_meta.root
+        i18n_model = i18n_meta.model
+        locale_cache = obj._translations_cache[i18n_model]
+        locale_cache.pop(locale, None)
+        data = self.cleaned_data_for_locales.get(locale)
+        if not data or all(not d for d in data.values()):
+            locale_cache[locale] = None
+            return []
+        return [t for t in obj._set_translated_fields(locale, **data)]
+
     def _save_locale(self, locale: str) -> Tuple:
         """
         Depending sent data, will save/create/delete translation for the given language code
@@ -84,6 +112,9 @@ class AutoParlerModelForm(Form):
                 for update, will return False and the updated of translation
         """
         obj = self.instance  # type: ignore
+
+        # We need to empty cache to force deletion / add etc. because _set_locale could have
+        # update the locale_cache for preview process.
         trans_exists = obj.has_translation(locale)
         data = self.cleaned_data_for_locales.get(locale)
         if not data or all(not d for d in data.values()):
@@ -125,6 +156,18 @@ class AutoParlerModelForm(Form):
         if kwargs.get("commit", True):
             for conf in settings.PARLER_LANGUAGES[None]:
                 self._save_locale(conf["code"])
+        else:
+            # disable parler cache for this request because we may be in preview mode
+            # and we don't want to retrieve from cache
+            parler_settings.PARLER_ENABLE_CACHING = False
+            for conf in settings.PARLER_LANGUAGES[None]:
+                self._set_locale(conf["code"])
+            wagtail_parler_locale_tab = self.data.get("wagtail_parler_locale_tab", None)
+            available_codes = [conf["code"] for conf in settings.PARLER_LANGUAGES[None]]
+            if not wagtail_parler_locale_tab or wagtail_parler_locale_tab not in available_codes:
+                wagtail_parler_locale_tab = self.instance.get_current_language()
+            else:
+                self.instance.set_current_language(wagtail_parler_locale_tab)
         return instance
 
 
@@ -152,7 +195,11 @@ def build_translations_form(
         "auto_parler_fields": set(),
     }
     i18n_model = model._parler_meta.root_model  # pylint: disable=protected-access
-    fields_for_model_kwargs = fields_for_model_kwargs or {}
+    if fields_for_model_kwargs:
+        fields_for_model_kwargs = deepcopy(fields_for_model_kwargs)
+        fields_for_model_kwargs.pop("defer_required_on_fields", None)
+    else:
+        fields_for_model_kwargs = {}
     fields_for_model_kwargs["model"] = i18n_model
     for conf in settings.PARLER_LANGUAGES[None]:
         for field_name, field in fields_for_model(**fields_for_model_kwargs).items():

@@ -1,4 +1,3 @@
-recursive-include wagtail_neuralyzer/static *
-recursive-include wagtail_neuralyzer/locale *
-recursive-include wagtail_neuralyzer/templates *
-
+recursive-include wagtail_parler/static *
+recursive-include wagtail_parler/locale *
+recursive-include wagtail_parler/templates *

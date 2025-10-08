@@ -1,0 +1,17 @@
+{% extends "wagtail_parler_tests/base.html" %}
+{% load i18n %}
+{% block body %}
+<article>
+    <header>
+        <h1>{{ object }}</h1>
+        <span>{{ object.yum_rating }}</span>
+        <summary>{{ object.summary }}</summary>
+    </header>
+
+    <main>{{ object.content }}</main>
+
+    <footer>
+        {% include "wagtail_parler_tests/inc/available_translations.html" %}
+    </footer>
+</article>
+{% endblock body %}
