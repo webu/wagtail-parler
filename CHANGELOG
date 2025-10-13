@@ -2,6 +2,10 @@
 
 * BREAKING CHANGE: Drop wagtail < penultimate LTS
 
+# 0.7.1 - 2025-10-13
+
+* fix release on pypi
+
 # 0.7.0 - 2025-10-13
 
 * add support for RevisionMixin (if you use Snippets instead of deprectated ModelAdmin)
