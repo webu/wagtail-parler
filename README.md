@@ -104,10 +104,39 @@ class FoodAdmin(ParlerModelAdminMixin, ModelAdmin):
 
 modeladmin_register(FoodAdmin)
 ```
+
 ## Doest it support `PreviewableMixin` ?
 
 Yes it does. When user change the translation tab, preview is updated with 
 translated data from the form. Same behaviour when a data is updated of course. 
+
+## Doest it support `RevisionMixin` ?
+
+Yes it does, but you need to inherit from `wagtail_parler.models.WagtailParlerModel`
+instead of `parler.models.TranslatableModel`. eg:
+
+```python
+# Django imports
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+
+# Third Party
+from wagtail.models import RevisionMixin
+from wagtail_parler.models import WagtailParlerModel
+
+class Food(RevisionMixin, WagtailParlerModel):
+    slug = models.SlugField(
+        verbose_name=_("Slug"),
+        blank=False,
+        null=False,
+    )
+    translations = {
+        "name": models.CharField(_("Nom"), max_length=255, blank=False, null=False),
+        "summary": models.TextField(_("Résumé"), blank=False, null=False),
+        "content": models.TextField(_("Contenu"), blank=False, null=False),
+    }
+```
+
 
 ## Extra 🧀🐦
 
