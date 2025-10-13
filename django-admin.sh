@@ -15,6 +15,7 @@ if [ ! -d ./.venv ] ; then
     python -m venv ./.venv
     . ./.venv/bin/activate
     pip install -e ./
+    pip install wagtail-modeladmin
     django-admin createcachetable
     django-admin migrate
 else

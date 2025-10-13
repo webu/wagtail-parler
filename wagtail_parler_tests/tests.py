@@ -510,7 +510,7 @@ class WagtailParlerSnippetsTests(WagtailParlerBaseTests, TestCase):
         """checks that preview display correct localized version of the instance"""
         jelly = Food.objects.get(pk=1)
         self.assertEqual(set(jelly.get_available_languages()), {"fr", "en"})
-        preview_url = self._get_admin_url("wagtail_parler_tests", "food", "preview", 1)
+        preview_url = self._get_admin_url("wagtail_parler_tests", "food", "preview", jelly.pk)
         data = {
             **GELY_DATA[None],
             **GELY_DATA["fr"],
@@ -543,7 +543,7 @@ class WagtailParlerSnippetsTests(WagtailParlerBaseTests, TestCase):
         """checks that preview display correct localized version of the instance"""
         jelly = Food.objects.get(pk=1)
         self.assertEqual(set(jelly.get_available_languages()), {"fr", "en"})
-        preview_url = self._get_admin_url("wagtail_parler_tests", "food", "preview", 1)
+        preview_url = self._get_admin_url("wagtail_parler_tests", "food", "preview", jelly.pk)
         data = {
             **GELY_DATA[None],
             **GELY_DATA["fr"],
@@ -574,7 +574,7 @@ class WagtailParlerSnippetsTests(WagtailParlerBaseTests, TestCase):
         """checks that preview display correct localized version of the instance"""
         jelly = Food.objects.get(pk=1)
         self.assertEqual(set(jelly.get_available_languages()), {"fr", "en"})
-        preview_url = self._get_admin_url("wagtail_parler_tests", "food", "preview", 1)
+        preview_url = self._get_admin_url("wagtail_parler_tests", "food", "preview", jelly.pk)
         data = {
             **GELY_DATA[None],
             **GELY_DATA["fr"],
@@ -600,7 +600,7 @@ class WagtailParlerSnippetsTests(WagtailParlerBaseTests, TestCase):
         """checks that preview display correct localized version of the instance"""
         jelly = Food.objects.get(pk=1)
         self.assertEqual(set(jelly.get_available_languages()), {"fr", "en"})
-        preview_url = self._get_admin_url("wagtail_parler_tests", "food", "preview", 1)
+        preview_url = self._get_admin_url("wagtail_parler_tests", "food", "preview", jelly.pk)
         data = {
             **GELY_DATA[None],
             **GELY_DATA["fr"],
@@ -628,3 +628,66 @@ class WagtailParlerSnippetsTests(WagtailParlerBaseTests, TestCase):
         self.assertEqual(jelly.get_translation("en").name, "Jelly")
         self.assertEqual(jelly.get_translation("fr").name, "Gelée")
         self.assertEqual(set(jelly.get_available_languages()), {"fr", "en"})
+
+    def test_revision_locale_dependent_existing_and_fallback(self) -> None:
+        """checks that preview display correct localized version of the instance"""
+        jelly = Food.objects.get(pk=1)
+        jelly.save_revision()
+        self.assertEqual(set(jelly.get_available_languages()), {"fr", "en"})
+        jelly.set_current_language("fr")
+        jelly.name = "Gelée modifiee"
+        jelly.set_current_language("en")
+        jelly.name = "Jelly updated"
+        jelly.save()
+        jelly.save_revision()
+        rev_from = jelly.revisions.first().pk
+        rev_to = jelly.revisions.last().pk
+        revision_url = (
+            self._get_admin_url("wagtail_parler_tests", "food", "history", jelly.pk)
+            + f"revisions/compare/{rev_from}...{rev_to}/"
+        )
+        resp = self.client.get(revision_url)
+        # expect 2 french translated additions:
+        # first is for french: of course captain obvious
+        # second is for spanish: no ES translations for this item, so we fallback on FR
+        self.assertContains(
+            resp, '<span class="addition"> modifiee</span>', count=2, status_code=200
+        )
+        self.assertContains(resp, '<span class="addition"> updated</span>', count=1)
+
+    def test_revision_locale_dependent_remove_translation(self) -> None:
+        """checks that preview display correct localized version of the instance"""
+        jelly = Food.objects.get(pk=1)
+        jelly.save_revision()
+        self.assertEqual(set(jelly.get_available_languages()), {"fr", "en"})
+        jelly.set_current_language("fr")
+        jelly.name = "Gelee modifiee"
+        jelly.delete_translation("en")
+        jelly.save()
+        jelly.save_revision()
+        rev_from = jelly.revisions.first().pk
+        rev_to = jelly.revisions.last().pk
+        revision_url = (
+            self._get_admin_url("wagtail_parler_tests", "food", "history", jelly.pk)
+            + f"revisions/compare/{rev_from}...{rev_to}/"
+        )
+        resp = self.client.get(revision_url)
+        # expect 3 french translated additions for name:
+        # first is for french: of course captain obvious
+        # second is for english: we deleted EN version, so EN now fallbacks on FR
+        # third is for spanish: no ES translations for this item, so we fallback on FR
+        self.assertContains(
+            resp, '<span class="addition">Gelee modifiee</span>', count=3, status_code=200
+        )
+        # EN version is now deleted and will fallback on french version
+        self.assertContains(resp, '<span class="deletion">Jelly</span>', count=1)
+        self.assertContains(
+            resp,
+            'Summary <span class="deletion">EN</span><span class="addition">FR</span>',
+            count=1,
+        )
+        self.assertContains(
+            resp,
+            'Content <span class="deletion">EN</span><span class="addition">FR</span>',
+            count=1,
+        )
