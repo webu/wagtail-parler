@@ -1,7 +1,10 @@
-# 0.7.0 - future
+# *FUTURE* 1.0.0 - *future, no date planed*
 
-* BREAKING CHANGE: Drop modeladmin support
-* BREAKING CHANGE: Drop wagtail under 6.3
+* BREAKING CHANGE: Drop wagtail < penultimate LTS
+
+# 0.7.0 - 2025-10-13
+
+* add support for RevisionMixin (if you use Snippets instead of deprectated ModelAdmin)
 
 # 0.6.1 - 2025-10-08
 

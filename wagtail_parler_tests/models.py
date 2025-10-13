@@ -3,20 +3,21 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 # Third Party
-from parler.models import TranslatableModel
 from parler.models import TranslatedFields
 from wagtail import blocks
 from wagtail.admin.panels import FieldPanel
 from wagtail.admin.panels import ObjectList
 from wagtail.fields import StreamField
 from wagtail.models import PreviewableMixin
+from wagtail.models import RevisionMixin
+from wagtail_parler.models import WagtailParlerModel
 
 
 class QABlock(blocks.StructBlock):
     text = blocks.TextBlock(label="Question")
 
 
-class BaseFood(PreviewableMixin, TranslatableModel):
+class BaseFood(RevisionMixin, PreviewableMixin, WagtailParlerModel):
     yum_rating = models.PositiveSmallIntegerField(
         verbose_name=_("Score de miam"), blank=False, null=False
     )

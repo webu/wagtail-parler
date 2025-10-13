@@ -1,8 +1,11 @@
 # Future imports
 from __future__ import annotations
 
+from copy import copy
+
 # Standard libs
 from copy import deepcopy
+from functools import partial
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -12,6 +15,7 @@ if TYPE_CHECKING:
     from typing import Set
     from typing import Tuple
 
+    from wagtail.admin.compare import FieldComparison
     from wagtail.admin.panels import Panel
     from wagtail_modeladmin.options import ModelAdmin
 
@@ -37,6 +41,50 @@ from .forms import build_translations_form
 
 
 class TranslationsList(ObjectList):
+    class BoundPanel(ObjectList.BoundPanel):
+        @property
+        def parler_locale(self) -> str:
+            return self.panel.current_parler_language
+
+        def get_comparison(self) -> list:
+            comparators = []
+            translation_model = self.instance._parler_meta.root_model
+            for child in self.children:
+                child = copy(child)
+                child.model = child.panel.model = translation_model
+                child.panel = deepcopy(child.panel)
+                child.panel.field_name = child.field_name.replace(
+                    f"translations_{self.parler_locale}_", ""
+                )
+                # child.instance = translation
+                orig_field = child.panel.db_field
+                child.panel.db_field = deepcopy(child.panel.db_field)
+                child.panel.db_field.verbose_name += f" [{self.panel.current_parler_language}]"
+                sub_comparators = child.get_comparison()
+                new_sub_comparator = []
+                for comparator in sub_comparators:
+                    comparator.current_locale = self.parler_locale
+
+                    def translated_comparator(
+                        comparator: FieldComparison, obj_a: Model, obj_b: Model
+                    ) -> FieldComparison:
+                        current_locale_a = obj_a.get_current_language()
+                        current_locale_b = obj_b.get_current_language()
+                        obj_a.set_current_language(comparator.current_locale)
+                        obj_b.set_current_language(comparator.current_locale)
+                        comparison = comparator(obj_a, obj_b)
+                        obj_a.set_current_language(current_locale_a)
+                        obj_b.set_current_language(current_locale_b)
+                        return comparison
+
+                    new_sub_comparator.append(partial(translated_comparator, comparator))
+                comparators.extend(new_sub_comparator)
+                child.panel.db_field = orig_field
+                child.panel.field_name = (
+                    f"translations_{self.parler_locale}_{child.panel.field_name}"
+                )
+            return comparators
+
     def __init__(self, *args: Tuple, **kwargs: Dict):
         self.current_parler_language = kwargs.pop("current_parler_language", None)
         self.initial_parler_heading = kwargs.pop(
