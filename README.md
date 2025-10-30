@@ -123,6 +123,8 @@ from django.utils.translation import gettext_lazy as _
 # Third Party
 from wagtail.models import RevisionMixin
 from wagtail_parler.models import WagtailParlerModel
+from parler.models import TranslatedFields
+
 
 class Food(RevisionMixin, WagtailParlerModel):
     slug = models.SlugField(
@@ -130,11 +132,11 @@ class Food(RevisionMixin, WagtailParlerModel):
         blank=False,
         null=False,
     )
-    translations = {
-        "name": models.CharField(_("Nom"), max_length=255, blank=False, null=False),
-        "summary": models.TextField(_("Résumé"), blank=False, null=False),
-        "content": models.TextField(_("Contenu"), blank=False, null=False),
-    }
+    translations = TranslatedFields(
+        name=models.CharField(_("Nom"), max_length=255, blank=False, null=False),
+        summary=models.TextField(_("Résumé"), blank=False, null=False),
+        content=models.TextField(_("Contenu"), blank=False, null=False),
+    )
 ```
 
 
