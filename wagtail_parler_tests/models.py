@@ -1,11 +1,13 @@
 # Django imports
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
 
 # Third Party
-from parler.models import TranslatedFields
+from parler.models import TranslatedFields, TranslatableModel
 from wagtail import blocks
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import FieldPanel, InlinePanel
 from wagtail.admin.panels import ObjectList
 from wagtail.fields import StreamField
 from wagtail.models import PreviewableMixin
@@ -141,3 +143,39 @@ class WeirdFood(BaseFood):
     class Meta:
         verbose_name = _("Nourriture - non standard translations field")
         verbose_name_plural = _("Nourritures - non standard translations field")
+
+
+class Ingredient(TranslatableModel):
+    translations = TranslatedFields(name=models.CharField(max_length=100))
+
+
+class FoodWithInlinePanel(ClusterableModel, BaseFood):
+    translations = TranslatedFields(**BaseFood.translations)
+
+    panels = [
+        FieldPanel("yum_rating"),
+        ObjectList(heading=_("Régime"), children=[FieldPanel("vegetarian"), FieldPanel("vegan")]),
+        InlinePanel("ingredients"),
+    ]
+
+    class Meta:
+        verbose_name = _("Nourriture - inline panel")
+        verbose_name_plural = _("Nourritures - inline panel")
+
+
+class FoodIngredient(models.Model):
+    food = ParentalKey(
+        FoodWithInlinePanel,
+        related_name="ingredients",
+        on_delete=models.CASCADE,
+    )
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.PROTECT,
+    )
+    panels = [
+        FieldPanel("ingredient"),
+    ]
+
+    class Meta:
+        unique_together = ["food", "ingredient"]
