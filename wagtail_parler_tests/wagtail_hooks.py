@@ -19,7 +19,7 @@ from wagtail_parler.handlers import ParlerModelAdminMixin
 from wagtail_parler.handlers import ParlerSnippetAdminMixin
 from wagtail_parler.handlers import TranslationsList
 
-from wagtail_parler_tests.models import Food
+from wagtail_parler_tests.models import Food, FoodWithInlinePanel
 from wagtail_parler_tests.models import FoodWithEditHandler
 from wagtail_parler_tests.models import FoodWithEmptyEditHandler
 from wagtail_parler_tests.models import FoodWithPanelsInsideModel
@@ -85,12 +85,17 @@ class FoodWithSpecificEditHandlerAdmin(ParlerModelAdminMixin, ModelAdmin):
     edit_handler = deepcopy(specific_edit_handler)
 
 
+class FoodWithInlinePanelAdmin(ParlerModelAdminMixin, ModelAdmin):
+    model = FoodWithInlinePanel
+
+
 modeladmin_register(FoodAdmin)
 modeladmin_register(WeirdFoodAdmin)
 modeladmin_register(FoodWithPanelsInsideModelAdmin)
 modeladmin_register(FoodWithEditHandlerAdmin)
 modeladmin_register(FoodWithEmptyEditHandlerAdmin)
 modeladmin_register(FoodWithSpecificEditHandlerAdmin)
+modeladmin_register(FoodWithInlinePanelAdmin)
 
 
 # Now, same things but  for Snippets
@@ -133,9 +138,14 @@ class FoodWithSpecificEditHandlerAdminSnippet(ParlerSnippetAdminMixin, SnippetVi
     edit_handler = deepcopy(specific_edit_handler)
 
 
+class FoodWithInlinePanelAdminSnippet(ParlerSnippetAdminMixin, SnippetViewSet):
+    model = FoodWithInlinePanel
+
+
 register_snippet(FoodAdminSnippet)
 register_snippet(WeirdFoodAdminSnippet)
 register_snippet(FoodWithPanelsInsideModelAdminSnippet)
 register_snippet(FoodWithEditHandlerAdminSnippet)
 register_snippet(FoodWithEmptyEditHandlerAdminSnippet)
 register_snippet(FoodWithSpecificEditHandlerAdminSnippet)
+register_snippet(FoodWithInlinePanelAdminSnippet)
