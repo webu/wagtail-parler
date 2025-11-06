@@ -339,6 +339,36 @@ class WagtailParlerBaseTests:
             {"vegetarian": {}, "vegan": {}},
         )
 
+    def test_inline_panels_from_model(self) -> None:
+        soup = self._get_admin_soup("wagtail_parler_tests", "foodwithinlinepanel", "add")
+        expected_tabs = [
+            "Untranslated data",
+            "French",
+            "English",
+            "Spanish",
+        ]
+        self._check_tabs(soup, expected_tabs)
+        self._check_tab(
+            soup,
+            "untranslated_data",
+            [
+                "panel-child-untranslated_data-yum_rating-section",
+                (
+                    "panel-child-untranslated_data-regime-section",
+                    [
+                        "panel-child-untranslated_data-child-regime-vegetarian-section",
+                        "panel-child-untranslated_data-child-regime-vegan-section",
+                    ],
+                ),
+                "panel-child-untranslated_data-ingredients-section",
+            ],
+            {
+                "yum_rating": {},
+                "vegetarian": {},
+                "vegan": {},
+            },
+        )
+
     def test_create_translations(self: TestCase) -> None:
         """checks we can create new translations for an instance"""
         jelly = Food.objects.get(pk=1)
