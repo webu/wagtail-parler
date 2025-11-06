@@ -2,10 +2,13 @@
 
 * 💣 **BREAKING CHANGE**: Drop wagtail < penultimate LTS
 
-# 0.7.2 - 2025-11-06
 
+# 0.7.3 - 2025-11-06
 * 🛠️ FIX: deactivation of parler cache: 
   now, revisions comparison don't deactive anymore the parler's cache
+
+# 0.7.2 - 2025-11-06
+
 * 🛠️ FIX: `inline_panels` can now be used with translated models (thanks @th3hamm0r)
 * 📜 DOC: standardisation of this CHANGELOG
 
