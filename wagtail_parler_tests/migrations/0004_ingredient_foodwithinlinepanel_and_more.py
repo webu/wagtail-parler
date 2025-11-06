@@ -5,14 +5,13 @@ import modelcluster.fields
 import parler.fields
 import parler.models
 import wagtail.fields
-import wagtail.models.preview
+from wagtail.models import PreviewableMixin
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
     dependencies = [
         ("wagtail_parler_tests", "0003_food_latest_revision_and_more"),
-        ("wagtailcore", "0095_groupsitepermission"),
     ]
 
     operations = [
@@ -74,7 +73,7 @@ class Migration(migrations.Migration):
                 "verbose_name_plural": "Nourritures - inline panel",
             },
             bases=(
-                wagtail.models.preview.PreviewableMixin,
+                PreviewableMixin,
                 parler.models.TranslatableModelMixin,
                 models.Model,
             ),
@@ -103,17 +102,18 @@ class Migration(migrations.Migration):
                 (
                     "qa",
                     wagtail.fields.StreamField(
-                        [("QaBlock", 1)],
+                        [
+                            (
+                                "QaBlock",
+                                wagtail.blocks.StructBlock(
+                                    [("text", wagtail.blocks.TextBlock(label="Question"))],
+                                    label="QA"
+                                ),
+                            )
+                        ],
                         blank=True,
-                        block_lookup={
-                            0: ("wagtail.blocks.TextBlock", (), {"label": "Question"}),
-                            1: (
-                                "wagtail.blocks.StructBlock",
-                                [[("text", 0)]],
-                                {"label": "QA"},
-                            ),
-                        },
                         null=True,
+                        use_json_field=True,
                         verbose_name="Some QA",
                     ),
                 ),

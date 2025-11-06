@@ -236,7 +236,8 @@ class ParlerAdminWagtailMixin:
             main_form_meta_attrs["formfield_callback"] = self.formfield_for_dbfield
         form_options = base_handlers.bind_to_model(self.model).get_form_options()
         form_options["fields"] = displayed_fields
-        # Remove formsets (usually added by the InlinePanel) before calling build_translations_form().
+        # Remove formsets (usually added by the InlinePanel)
+        # before calling build_translations_form().
         form_options.pop("formsets", None)
         if WAGTAIL_VERSION[0] >= 7:
             # wagtail 7 add "defer_required_on_fields"
