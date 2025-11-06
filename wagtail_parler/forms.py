@@ -24,7 +24,6 @@ from django.db import transaction
 from django.forms import Form
 from django.forms.models import fields_for_model
 
-from parler import appsettings as parler_settings
 from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.admin.rich_text.editors.draftail import DraftailRichTextArea
 
@@ -169,9 +168,6 @@ class AutoParlerModelForm(Form):
             for conf in settings.PARLER_LANGUAGES[None]:
                 self._save_locale(conf["code"])
         else:
-            # disable parler cache for this request because we may be in preview mode
-            # and we don't want to retrieve from cache
-            parler_settings.PARLER_ENABLE_CACHING = False
             for conf in settings.PARLER_LANGUAGES[None]:
                 self._set_locale(conf["code"])
             wagtail_parler_locale_tab = self.data.get("wagtail_parler_locale_tab", None)
