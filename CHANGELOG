@@ -1,78 +1,80 @@
 # *FUTURE* 1.0.0 - *future, no date planed*
 
-* BREAKING CHANGE: Drop wagtail < penultimate LTS
+* 💣 **BREAKING CHANGE**: Drop wagtail < penultimate LTS
+
+# 0.7.2 - 2025-11-06
+
+* 🛠️ FIX: deactivation of parler cache: 
+  now, revisions comparison don't deactive anymore the parler's cache
+* 🛠️ FIX: `inline_panels` can now be used with translated models (thanks @th3hamm0r)
+* 📜 DOC: standardisation of this CHANGELOG
 
 # 0.7.1 - 2025-10-13
 
-* fix release on pypi
+* 🛠️ FIX: release on pypi
 
 # 0.7.0 - 2025-10-13
 
-* add support for RevisionMixin (if you use Snippets instead of deprectated ModelAdmin)
+* ✨ FEAT: add support for RevisionMixin (if you use Snippets instead of deprectated ModelAdmin)
 
 # 0.6.1 - 2025-10-08
 
-* fix preview when translation does not exists
-* fix preview when translation will be deleted 
+* 🛠️ FIX: preview when translation does not exists
+* 🛠️ FIX: preview when translation will be deleted 
 
 # 0.6.0 - 2025-10-08
 
-* add support for `PreviewableMixin`
+* ✨ FEAT: add support for `PreviewableMixin`
 
 # 0.5.0 - 2025-07-08
 
-* fix MANIFEST.in
-* fix missing __init__.py in `admin` which was missing in the released egg
+* 🛠️ FIX: MANIFEST.in
+* 🛠️ FIX: missing __init__.py in `admin` which was missing in the released egg
 
 # 0.4.0 - 2025-07-08
 
-* Add support for wagtail 7.0
-* add support of django 5.2
-
-# 0.4.0
-
-* Add support for wagtail 7.0
-* add support of django 5.2
+* ✨ FEAT: add support for wagtail 7.0
+* ✨ FEAT: add support of django 5.2
 
 # 0.3.2 - 2025-02-06
 
-* fix: exception when using RichText and preview
+* 🛠️ FIX: exception when using RichText and preview
 
 # 0.3.1 - 2024-10-07
 
-* Fix the lose of widget which was added into FieldPanel kwargs 
+* 🛠️ FIX: the lose of widget which was added into FieldPanel kwargs 
   (eg: `FieldPanel("slug", wiget=SlugInput)`)
 
 
 # 0.3.0 - 2024-09-26
 
-* Add a "LanguagesColumn" for SnippetViewset to view in the list which languages are currently translated for instance
-* Fix usage of non standard `translations` field
+* ✨ FEAT: add a "LanguagesColumn" for SnippetViewset to view in the list which languages are currently translated for instance
+* 🛠️ FIX: usage of non standard `translations` field
 
 # 0.2.4 - 2024-09-18
 
-* fix github actions pour qa control
+* 🛠️ FIX: github actions pour qa control
 
 # 0.2.3 - 2024-09-18
 
-* add supports of `TitleFieldPanel.targets` to autocomplete untranslated or translated fields
+* ✨ FEAT: add supports of `TitleFieldPanel.targets` to autocomplete untranslated or translated fields
 
 # 0.2.2 - 2024-09-05
 
-* github / tox / black / pip release fix
+* 🛠️ FIX: github / tox / black / pip release fix
 
 # 0.2.1 - 2024-09-05
 
-* github / tox / black / pip release fix
+* 🛠️ FIX: github / tox / black / pip release fix
 
 # 0.2.0 - 2024-09-04
 
-* remove support of wagtail < 5.0
-* remove support of django < 4.2
-* add support of wagtail 6.0, 6.1, 6.2
-* fix usage of wagtail fields overrides registry
-* add this CHANGELOG 😸
+* 💣 **BREAKING CHANGE**: remove support of wagtail < 5.0
+* 💣 **BREAKING CHANGE**: remove support of django < 4.2
+* ✨ FEAT: add support of wagtail 6.0, 6.1, 6.2
+* 🛠️ FIX: usage of wagtail fields overrides registry
+* 📜 DOC: add this CHANGELOG 😸
 
 # 0.1.x - 2023-09-18
 
-First version 🧀 🐦
+* 🥚 INIT: First version 🧀 🐦
