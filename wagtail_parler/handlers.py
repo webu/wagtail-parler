@@ -72,7 +72,11 @@ class TranslationsList(ObjectList):
                         current_locale_b = obj_b.get_current_language()
                         obj_a.set_current_language(comparator.current_locale)
                         obj_b.set_current_language(comparator.current_locale)
+                        # hack: set PKs to None to not use parler cache during comparison
+                        old_pk_a, old_pk_b = obj_a.pk, obj_b.pk
+                        obj_a.pk = obj_b.pk = None
                         comparison = comparator(obj_a, obj_b)
+                        obj_a.pk, obj_b.pk = old_pk_a, old_pk_b
                         obj_a.set_current_language(current_locale_a)
                         obj_b.set_current_language(current_locale_b)
                         return comparison
