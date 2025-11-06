@@ -19,6 +19,7 @@ from django.utils.translation import gettext_lazy as _
 from bs4 import BeautifulSoup
 from bs4 import NavigableString
 from bs4 import Tag
+from wagtail import VERSION as WAGTAIL_VERSION
 
 from wagtail_parler_tests.models import Food
 from wagtail_parler_tests.models import WeirdFood
@@ -360,7 +361,11 @@ class WagtailParlerBaseTests:
                         "panel-child-untranslated_data-child-regime-vegan-section",
                     ],
                 ),
-                "panel-child-untranslated_data-ingredients-section",
+                (
+                    "panel-child-untranslated_data-panel-section"
+                    if WAGTAIL_VERSION < (7, 0)
+                    else "panel-child-untranslated_data-ingredients-section"
+                ),
             ],
             {
                 "yum_rating": {},
@@ -368,6 +373,8 @@ class WagtailParlerBaseTests:
                 "vegan": {},
             },
         )
+        formset_input = soup.find("input", id="id_ingredients-TOTAL_FORMS")
+        self.assertTrue(formset_input is not None)
 
     def test_create_translations(self: TestCase) -> None:
         """checks we can create new translations for an instance"""
