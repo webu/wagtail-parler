@@ -105,6 +105,22 @@ class FoodAdmin(ParlerModelAdminMixin, ModelAdmin):
 modeladmin_register(FoodAdmin)
 ```
 
+## Add languages info in the admin
+
+A custom column `LanguagesColumn` is also available to display languages translations state.
+
+```py
+...
+from wagtail_parler.admin.columns import LanguagesColumn
+
+class FoodAdmin(ParlerSnippetAdminMixin, SnippetViewSet):
+    model = Food
+    list_display = [..., LanguagesColumn("translations"), ...]
+
+register_snippet(FoodAdmin)
+```
+
+
 ## Doest it support `PreviewableMixin` ?
 
 Yes it does. When user change the translation tab, preview is updated with 
