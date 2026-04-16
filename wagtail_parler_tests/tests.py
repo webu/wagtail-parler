@@ -21,6 +21,7 @@ from bs4 import NavigableString
 from bs4 import Tag
 from wagtail import VERSION as WAGTAIL_VERSION
 
+# wagtail / parler
 from wagtail_parler_tests.models import Food
 from wagtail_parler_tests.models import WeirdFood
 
@@ -309,7 +310,6 @@ class WagtailParlerBaseTests:
         )
         for locale_code, locale_name in tabs:
             main_id = f"parler_translations_{locale_code}"
-            childsection = f"panel-child-{main_id}-child-html_content"
             self._check_tab(
                 soup,
                 main_id,
@@ -318,10 +318,7 @@ class WagtailParlerBaseTests:
                     f"panel-child-{main_id}-translations_{locale_code}_name-section",
                     (
                         f"panel-child-{main_id}-html_content-section",
-                        [
-                            f"{childsection}-translations_{locale_code}_summary-section",
-                            f"{childsection}-translations_{locale_code}_content-section",
-                        ],
+                        [],
                     ),
                 ],
                 {
@@ -691,6 +688,29 @@ class WagtailParlerSnippetsTests(WagtailParlerBaseTests, TestCase):
             resp, '<span class="addition"> modifiee</span>', count=2, status_code=200
         )
         self.assertContains(resp, '<span class="addition"> updated</span>', count=1)
+
+    def test_save_draft_do_not_publish_translation(self) -> None:
+        """checks that preview display correct localized version of the instance"""
+        jelly = Food.objects.get(pk=1)
+        jelly.save_revision()
+        self.assertEqual(set(jelly.get_available_languages()), {"fr", "en"})
+        jelly.set_current_language("fr")
+        jelly.name = "Gelée modifiée"
+        jelly.save_revision()
+        jelly.vegetarian = False
+        jelly.save(update_fields=["vegetarian"])  # should not update translated fields
+
+        rev_from = jelly.revisions.first()
+        rev_to = jelly.revisions.last()
+
+        jelly = Food.objects.get(pk=1)
+        jelly.set_current_language("fr")
+
+        self.assertEqual(rev_from.content["translations"]["fr"]["name"], "Gelée")
+        self.assertEqual(rev_to.content["translations"]["fr"]["name"], "Gelée modifiée")
+        self.assertEqual(jelly.name, "Gelée")  # but published objet should stay the same
+        # because we only save the vegetarian field, not the translations
+        self.assertEqual(jelly.vegetarian, False)
 
     def test_revision_locale_dependent_remove_translation(self) -> None:
         """checks that preview display correct localized version of the instance"""

@@ -1,9 +1,8 @@
 # Future imports
 from __future__ import annotations
 
-from copy import deepcopy
-
 # Standard libs
+from copy import deepcopy
 import re
 from typing import TYPE_CHECKING
 
@@ -24,6 +23,7 @@ from django.db import transaction
 from django.forms import Form
 from django.forms.models import fields_for_model
 
+# Third Party
 from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.admin.rich_text.editors.draftail import DraftailRichTextArea
 
@@ -59,12 +59,6 @@ class AutoParlerModelForm(Form):
             for field_name, i18n_field_name in self.get_localized_fieldnames(language_code):
                 if hasattr(translation, field_name):
                     initials[i18n_field_name] = getattr(translation, field_name)
-        # translations = getattr(instance, instance._parler_meta.root_rel_name)
-        # for translation in translations.all():
-        #     language_code = translation.language_code
-        #     for field_name, i18n_field_name in self.get_localized_fieldnames(language_code):
-        #         if hasattr(translation, field_name):
-        #             initials[i18n_field_name] = getattr(translation, field_name)
         return initials
 
     def get_localized_fieldnames(self, locale: str) -> Generator:

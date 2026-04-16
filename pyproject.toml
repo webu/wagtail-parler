@@ -50,3 +50,23 @@
     exclude = [".venv"]
     venvPath = "."
     venv = "./.venv"
+    
+[tool.coverage.run]
+    omit = [
+        "*/wagtail_parler_tests/*",
+        "./setup.py", 
+        "*/.tox/*", 
+        "*/migrations/*"
+    ]
+    exclude_lines = [
+        "pragma: no cover",
+        "if TYPE_CHECKING:"   
+    ]
+
+[tool.coverage.report]
+    omit = [
+        "*/wagtail_parler_tests/*",
+        "./setup.py", 
+        "*/.tox/*", 
+        "*/.migrations/*"
+    ]

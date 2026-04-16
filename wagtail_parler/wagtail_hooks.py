@@ -1,6 +1,8 @@
+# Django imports
 from django.templatetags.static import static
 from django.utils.html import format_html
 
+# Third Party
 from wagtail import hooks
 
 
