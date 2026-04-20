@@ -7,6 +7,7 @@
 * 🛠️ FIX: do not publish the translation when we just save a draft (use of DraftStateMixin) 
 * 🛠️ FIX: test/qa `wagtail_parler` only and not anymore tests, .tox content
 * ✨ FEAT: Add wagtail 7.1 an 7.2 tests.
+* 💀 Disable github coverage: does not work anymore (again) and no time to fix it: use tox please
 
 # 0.7.3 - 2025-11-06
 * 🛠️ FIX: deactivation of parler cache: 

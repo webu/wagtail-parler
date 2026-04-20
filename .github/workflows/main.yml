@@ -125,18 +125,19 @@ jobs:
       #   run: |
       #     ls -la
 
-      - name: Save PR number and combine coverage data
-        run: |
-          mv coverage-data-*/.coverage* ./
-          rm -rf coverage-data-*
-          mkdir -p ./pr
-          coverage combine
-          coverage report --include="./wagtail_parler/" -m --format="markdown" > ./pr/coverage.md
-          coverage report --include="./wagtail_parler/" --format="total" > ./pr/coverage_total
-          cat ./pr/coverage_total
-          echo ${{ github.event.number }} > ./pr/NR
+      # Disable coverage combination : does not work anymore again...
+      # - name: Save PR number and combine coverage data
+      #   run: |
+      #     mv coverage-data-*/.coverage* ./
+      #     rm -rf coverage-data-*
+      #     mkdir -p ./pr
+      #     coverage combine
+      #     coverage report --include="./wagtail_parler/" -m --format="markdown" > ./pr/coverage.md
+      #     coverage report --include="./wagtail_parler/" --format="total" > ./pr/coverage_total
+      #     cat ./pr/coverage_total
+      #     echo ${{ github.event.number }} > ./pr/NR
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: pr
-          path: pr/
+      # - uses: actions/upload-artifact@v4
+      #   with:
+      #     name: pr
+      #     path: pr/
