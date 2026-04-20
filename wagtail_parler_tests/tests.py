@@ -663,7 +663,7 @@ class WagtailParlerSnippetsTests(WagtailParlerBaseTests, TestCase):
         self.assertEqual(jelly.get_translation("fr").name, "Gelée")
         self.assertEqual(set(jelly.get_available_languages()), {"fr", "en"})
 
-    def test_revision_locale_dependent_existing_and_fallback(self) -> None:
+    def test_arevision_locale_dependent_existing_and_fallback(self) -> None:
         """checks that preview display correct localized version of the instance"""
         jelly = Food.objects.get(pk=1)
         jelly.save_revision()

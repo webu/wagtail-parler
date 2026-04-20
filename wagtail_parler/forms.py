@@ -17,6 +17,8 @@ if TYPE_CHECKING:
 
     from django.db.models import Model
 
+    from parler.model import TranslatedFieldsModel
+
 # Django imports
 from django.conf import settings
 from django.db import transaction
@@ -26,6 +28,8 @@ from django.forms.models import fields_for_model
 # Third Party
 from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.admin.rich_text.editors.draftail import DraftailRichTextArea
+
+from .models import TO_DELETE
 
 
 class AutoParlerModelForm(Form):
@@ -54,11 +58,17 @@ class AutoParlerModelForm(Form):
         """
         if not instance or not instance.pk:
             return None
+        i18n_meta = instance._parler_meta.root
+        i18n_model = i18n_meta.model
         for language_code in instance.get_available_languages(include_unsaved=True):
-            translation = instance.get_translation(language_code)
-            for field_name, i18n_field_name in self.get_localized_fieldnames(language_code):
-                if hasattr(translation, field_name):
-                    initials[i18n_field_name] = getattr(translation, field_name)
+            try:
+                translation = instance.get_translation(language_code)
+            except i18n_model.DoesNotExist:
+                pass
+            else:
+                for field_name, i18n_field_name in self.get_localized_fieldnames(language_code):
+                    if hasattr(translation, field_name):
+                        initials[i18n_field_name] = getattr(translation, field_name)
         return initials
 
     def get_localized_fieldnames(self, locale: str) -> Generator:
@@ -80,10 +90,7 @@ class AutoParlerModelForm(Form):
             locale (str): locale code of translation to save/create/delete
 
         Returns:
-            (None|True|False, int|instance|[instances]: for deletion, will return None and the
-                number of translations deleted
-                for creation, will return True and the created of translation
-                for update, will return False and the updated of translation
+            [instances] updated/created instances of translation
         """
         obj = self.instance  # type: ignore
         i18n_meta = obj._parler_meta.root
@@ -91,17 +98,14 @@ class AutoParlerModelForm(Form):
         locale_cache = obj._translations_cache[i18n_model]
         locale_cache.pop(locale, None)
         data = self.cleaned_data_for_locales.get(locale)
-        original_state = obj._state.adding
+        ret: List[TranslatedFieldsModel] = []
         if not data or all(not d for d in data.values()):
-            obj._state.adding = (
-                True  # Hack to avoid fetching from DB in case we empty a translation
-            )
-            # now, parler will believe there are no translations for this local and will use
-            # fallbacks if available
-            locale_cache[locale] = obj._get_translated_model(locale, use_fallback=True)
-            obj._state.adding = original_state
-            return []
-        return [t for t in obj._set_translated_fields(locale, **data)]
+            locale_cache[locale] = TO_DELETE
+            return ret
+        for t in obj._set_translated_fields(locale, **data):
+            obj._translations_cache[t._meta.model][locale] = t
+            ret.append(t)
+        return ret
 
     def _save_locale(self, locale: str) -> Tuple:
         """

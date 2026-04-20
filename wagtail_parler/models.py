@@ -5,11 +5,20 @@ from typing import TYPE_CHECKING
 
 from modelcluster.models import get_serializable_data_for_fields
 from modelcluster.models import model_from_serializable_data
+from parler.cache import IsMissing
+from parler.cache import is_missing
 from parler.models import TranslatableModel
 
 if TYPE_CHECKING:
     from typing import Dict
     from typing import Tuple
+
+
+class ToDelete(IsMissing):
+    pass
+
+
+TO_DELETE = ToDelete()
 
 
 class WagtailParlerModel(TranslatableModel):
@@ -47,12 +56,14 @@ class WagtailParlerModel(TranslatableModel):
         i18n_model = i18n_meta.model
         locale_cache = instance._translations_cache[i18n_model]
 
-        current_translations = {}
-        for locale in instance.get_available_languages(include_unsaved=False):
-            current_translations[locale] = instance.get_translation(locale)
-
-        old_translations = data.get(instance._parler_meta.root_rel_name, {})
         empty_locales = []
+        old_translations = data.get(instance._parler_meta.root_rel_name, {})
+        current_translations = {}
+        for locale in instance.get_available_languages(include_unsaved=True):
+            current_translations[locale] = instance.get_translation(locale)
+            if locale not in old_translations:
+                locale_cache[locale] = TO_DELETE
+
         for locale, trans_data in old_translations.items():
             locale_cache.pop(locale, None)
             if not trans_data or all(not d for d in data.values()):
@@ -70,8 +81,15 @@ class WagtailParlerModel(TranslatableModel):
 
     def _serializable_translated_data(self) -> dict:
         translations = {}
-        for locale in self.get_available_languages(include_unsaved=False):
-            translation = self.get_translation(locale)
+        i18n_meta = self._parler_meta.root
+        i18n_model = i18n_meta.model
+        for locale in self.get_available_languages():  # force to load translations
+            self.has_translation(locale)
+
+        for locale, translation in self._translations_cache[i18n_model].items():
+            if is_missing(translation):
+                continue
+            # translation = self.get_translation(locale)
             if hasattr(translation, "serializable_data") and callable(
                 translation.serializable_data
             ):
@@ -98,4 +116,13 @@ class WagtailParlerModel(TranslatableModel):
     def save_translations(self, *args: Tuple, **kwargs: Dict) -> None:
         if getattr(self, "_do_not_save_translations", False):
             return
-        return super().save_translations(*args, **kwargs)
+        ret = super().save_translations(*args, **kwargs)
+        for i18n_model, data in self._translations_cache.items():
+            for locale, translation in data.items():
+                if isinstance(translation, ToDelete):
+                    translation = i18n_model.objects.filter(
+                        language_code=locale, master_id=self.pk
+                    ).first()
+                    if translation:
+                        translation.delete()
+        return ret

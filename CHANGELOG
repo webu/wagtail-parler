@@ -2,6 +2,9 @@
 
 * 💣 **BREAKING CHANGE**: Drop wagtail < penultimate LTS
 
+# 0.7.5 - 2026-04-20
+
+* 🛠️ FIX: revision rollback and revision in another language than current one
 
 # 0.7.4 - 2026-04-16
 * 🛠️ FIX: do not publish the translation when we just save a draft (use of DraftStateMixin) 
