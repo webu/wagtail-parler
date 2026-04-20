@@ -1,6 +1,15 @@
+# Future imports
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from modelcluster.models import get_serializable_data_for_fields
 from modelcluster.models import model_from_serializable_data
 from parler.models import TranslatableModel
+
+if TYPE_CHECKING:
+    from typing import Dict
+    from typing import Tuple
 
 
 class WagtailParlerModel(TranslatableModel):
@@ -34,8 +43,6 @@ class WagtailParlerModel(TranslatableModel):
     def _from_serializable_translated_data(
         cls, instance: TranslatableModel, data: dict, check_fks: bool, strict_fks: bool
     ) -> None:
-        if not hasattr(instance, "_parler_meta"):
-            return
         i18n_meta = instance._parler_meta.root
         i18n_model = i18n_meta.model
         locale_cache = instance._translations_cache[i18n_model]
@@ -62,9 +69,6 @@ class WagtailParlerModel(TranslatableModel):
         instance._state.adding = original_state
 
     def _serializable_translated_data(self) -> dict:
-        if not hasattr(self, "_parler_meta"):
-            return {}
-
         translations = {}
         for locale in self.get_available_languages(include_unsaved=False):
             translation = self.get_translation(locale)
@@ -78,3 +82,20 @@ class WagtailParlerModel(TranslatableModel):
         return {
             self._parler_meta.root_rel_name: translations,
         }
+
+    def save(self, *args: Tuple, **kwargs: Dict) -> None:
+        """
+        Fix bug of django-parler: it removes update_fields but when saving a revision should only
+        save the `latest_revision` field: not the translations !
+        """
+        update_fields = kwargs.get("update_fields", None)
+        self._do_not_save_translations = (
+            update_fields and self._parler_meta.root.rel_name not in update_fields
+        )
+        super().save(*args, **kwargs)
+        self._do_not_save_translations = None
+
+    def save_translations(self, *args: Tuple, **kwargs: Dict) -> None:
+        if getattr(self, "_do_not_save_translations", False):
+            return
+        return super().save_translations(*args, **kwargs)

@@ -46,6 +46,16 @@ jobs:
             wagtail: '"wagtail>=7.0,<7.1" "wagtail-modeladmin>=2.0,<3.0"'
             coverage: 'py3.11_django-5.2_wagtail-7.0'
             experimental: false
+          - python: '3.11'
+            django: '"Django>=5.2,<5.3"'
+            wagtail: '"wagtail>=7.1,<7.2" "wagtail-modeladmin>=2.0,<3.0"'
+            coverage: 'py3.11_django-5.2_wagtail-7.1'
+            experimental: false
+          - python: '3.11'
+            django: '"Django>=5.2,<5.3"'
+            wagtail: '"wagtail>=7.2,<7.3" "wagtail-modeladmin>=2.0,<3.0"'
+            coverage: 'py3.11_django-5.2_wagtail-7.2'
+            experimental: false
           - python: '3.12'
             django: '"git+https://github.com/django/django.git@main#egg=Django"'
             wagtail: '"git+https://github.com/wagtail/wagtail.git@main#egg=wagtail" "wagtail-modeladmin>=2.0,<3.0"'
@@ -66,7 +76,7 @@ jobs:
           pip install ${{ matrix.wagtail }}
       - name: Test
         run: |
-          coverage run --parallel-mode ./runtests.py
+          coverage run --include="./wagtail_parler/" --parallel-mode ./runtests.py
           mv .coverage.* .coverage.${{ matrix.coverage }}
       - name: Upload coverage data
         uses: actions/upload-artifact@v4
@@ -121,8 +131,8 @@ jobs:
           rm -rf coverage-data-*
           mkdir -p ./pr
           coverage combine
-          coverage report -m --format="markdown" > ./pr/coverage.md
-          coverage report --format="total" > ./pr/coverage_total
+          coverage report --include="./wagtail_parler/" -m --format="markdown" > ./pr/coverage.md
+          coverage report --include="./wagtail_parler/" --format="total" > ./pr/coverage_total
           cat ./pr/coverage_total
           echo ${{ github.event.number }} > ./pr/NR
 

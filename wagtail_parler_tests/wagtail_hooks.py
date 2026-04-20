@@ -6,15 +6,16 @@ from django.utils.translation import gettext_lazy as _
 
 # Third Party
 from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import MultiFieldPanel
 from wagtail.admin.panels import ObjectList
 from wagtail.admin.panels import TitleFieldPanel
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
 from wagtail_modeladmin.options import ModelAdmin
 from wagtail_modeladmin.options import modeladmin_register
-from wagtail_parler.admin.columns import LanguagesColumn
 
 # wagtail / parler
+from wagtail_parler.admin.columns import LanguagesColumn
 from wagtail_parler.handlers import ParlerModelAdminMixin
 from wagtail_parler.handlers import ParlerSnippetAdminMixin
 from wagtail_parler.handlers import TranslationsList
@@ -22,6 +23,7 @@ from wagtail_parler.handlers import TranslationsList
 from wagtail_parler_tests.models import Food, FoodWithInlinePanel
 from wagtail_parler_tests.models import FoodWithEditHandler
 from wagtail_parler_tests.models import FoodWithEmptyEditHandler
+from wagtail_parler_tests.models import FoodWithInlinePanel
 from wagtail_parler_tests.models import FoodWithPanelsInsideModel
 from wagtail_parler_tests.models import FoodWithSpecificEditHandler
 from wagtail_parler_tests.models import WeirdFood
@@ -34,7 +36,7 @@ specific_edit_handler = ObjectList(
             heading="%(code)s: %(locale)s %(status)s",  # type: ignore
             children=[  # type: ignore
                 TitleFieldPanel("name", targets=["slug", "summary"]),
-                ObjectList(
+                MultiFieldPanel(
                     heading="HTML content",
                     children=[
                         FieldPanel("summary"),
@@ -74,7 +76,11 @@ class FoodWithEmptyEditHandlerAdmin(ParlerModelAdminMixin, ModelAdmin):
                 # let children empty, it will be auto populated
             ),
             ObjectList(
-                heading=_("Régime"), children=[FieldPanel("vegetarian"), FieldPanel("vegan")]
+                children=[
+                    FieldPanel("vegetarian"),
+                    FieldPanel("vegan"),
+                ],
+                heading="Régime",
             ),
         ],
     )

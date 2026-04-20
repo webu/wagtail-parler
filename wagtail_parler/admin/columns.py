@@ -1,9 +1,13 @@
+# Future imports
 from __future__ import annotations
 
+# Standard libs
 from typing import Dict
 
+# Django imports
 from django.conf import settings
 
+# Third Party
 from parler.models import TranslatableModel
 from wagtail.admin.ui.tables import Column
 

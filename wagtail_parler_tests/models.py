@@ -1,17 +1,21 @@
 # Django imports
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from modelcluster.fields import ParentalKey
-from modelcluster.models import ClusterableModel
 
 # Third Party
-from parler.models import TranslatedFields, TranslatableModel
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
+from parler.models import TranslatableModel
+from parler.models import TranslatedFields
 from wagtail import blocks
-from wagtail.admin.panels import FieldPanel, InlinePanel
+from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import InlinePanel
 from wagtail.admin.panels import ObjectList
 from wagtail.fields import StreamField
 from wagtail.models import PreviewableMixin
 from wagtail.models import RevisionMixin
+
+# wagtail / parler
 from wagtail_parler.models import WagtailParlerModel
 
 

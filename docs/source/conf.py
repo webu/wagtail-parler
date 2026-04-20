@@ -13,7 +13,6 @@ import os
 # Django imports
 import django
 
-# Third Party
 # wagtail / parler
 from wagtail_parler import __version__ as wagtail_parler_version
 
