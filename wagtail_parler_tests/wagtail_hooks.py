@@ -20,7 +20,7 @@ from wagtail_parler.handlers import ParlerModelAdminMixin
 from wagtail_parler.handlers import ParlerSnippetAdminMixin
 from wagtail_parler.handlers import TranslationsList
 
-from wagtail_parler_tests.models import Food, FoodWithInlinePanel
+from wagtail_parler_tests.models import Food
 from wagtail_parler_tests.models import FoodWithEditHandler
 from wagtail_parler_tests.models import FoodWithEmptyEditHandler
 from wagtail_parler_tests.models import FoodWithInlinePanel
