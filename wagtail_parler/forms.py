@@ -200,10 +200,13 @@ def build_translations_form(
         "Meta": type("Meta", (WagtailAdminModelForm.Meta,), main_form_meta_attrs),
         "auto_parler_fields": set(),
     }
+    
     i18n_model = model._parler_meta.root_model  # pylint: disable=protected-access
     if fields_for_model_kwargs:
         fields_for_model_kwargs = deepcopy(fields_for_model_kwargs)
         fields_for_model_kwargs.pop("defer_required_on_fields", None)
+        if "initial" in fields_for_model_kwargs:
+            attrs["initial"] = fields_for_model_kwargs.pop("initial")
     else:
         fields_for_model_kwargs = {}
     fields_for_model_kwargs["model"] = i18n_model
@@ -211,4 +214,4 @@ def build_translations_form(
         for field_name, field in fields_for_model(**fields_for_model_kwargs).items():
             attrs["auto_parler_fields"].add(field_name)  # type: ignore
             attrs["translations_%s_%s" % (conf["code"], field_name)] = field
-    return type("%sForm" % model.__name__, (AutoParlerModelForm, base_form), attrs)
+    return type("%sParlerForm" % model.__name__, (AutoParlerModelForm, base_form), attrs)
