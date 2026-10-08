@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 from modelcluster.models import get_serializable_data_for_fields
 from modelcluster.models import model_from_serializable_data
 from parler.cache import IsMissing
-from parler.cache import is_missing
 from parler.models import TranslatableModel
 
 if TYPE_CHECKING:
@@ -83,13 +82,16 @@ class WagtailParlerModel(TranslatableModel):
         translations = {}
         i18n_meta = self._parler_meta.root
         i18n_model = i18n_meta.model
-        for locale in self.get_available_languages():  # force to load translations
-            self.has_translation(locale)
-
-        for locale, translation in self._translations_cache[i18n_model].items():
-            if is_missing(translation):
+        for locale in (
+            set(self.get_available_languages()) | self._translations_cache[i18n_model].keys()
+        ):
+            try:
+                translation = self._get_translated_model(
+                    locale, use_fallback=False, auto_create=False
+                )
+            except i18n_model.DoesNotExist:
                 continue
-            # translation = self.get_translation(locale)
+
             if hasattr(translation, "serializable_data") and callable(
                 translation.serializable_data
             ):
