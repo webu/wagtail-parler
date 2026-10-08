@@ -2,44 +2,6 @@
     exclude = "build,.git,.tox,./tests/env,./.venv"
     max-line-length = 99
 
-[tool.black]
-    line-length = 99
-    include = '\.pyi?$'
-    exclude = '''
-    /(
-        \.git
-      | python-env
-      | migrations
-      | \.tox
-      | \.venv
-      | docs/\.*/
-    )/
-    '''
-
-
-[tool.isort]
-    profile="black"
-    line_length = 99
-    known_django = ["django"]
-    known_pylib = ["dateutil"]
-    known_third_party = ["parler", "wagtail"]
-    known_first_party = ["wagtail_parler"]
-    indent = '    '
-    multi_line_output = 3
-    length_sort = false
-    force_single_line = true
-    default_section = "THIRDPARTY"
-    sections  = ["FUTURE", "STDLIB", "PYLIB", "DJANGO", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
-    combine_as_imports = true
-    import_heading_future = "Future imports"
-    import_heading_stdlib = "Standard libs"
-    import_heading_pylib = "Python libs"
-    import_heading_django = "Django imports"
-    import_heading_thirdparty = "Third Party"
-    import_heading_firstparty = "wagtail / parler"
-    import_heading_localfolder = "Local Apps"
-    force_sort_within_sections=true
-
 [tool.djlint]
     profile = "django"
     preserve_blank_lines = true
@@ -50,6 +12,34 @@
     exclude = [".venv"]
     venvPath = "."
     venv = "./.venv"
+
+[tool.ruff]
+    include = ["pyproject.toml", "src/**/*.py"]
+    line-length = 99
+    extend-exclude = [
+        "__pycache__",
+        "migrations"
+    ]
+
+[tool.ruff.lint]
+    select = [
+        "F401", # unused imports
+        "I",
+    ] # https://docs.astral.sh/ruff/rules
+
+[tool.ruff.lint.isort]
+    length-sort = false
+    force-single-line = true
+    force-sort-within-sections = true
+    known-first-party = ["wagtail_parler"]
+    known-third-party = ["parler", "wagtail"]
+    section-order = ["future", "standard-library", "pylib", "django", "third-party", "first-party", "webu", "local-folder"]
+    known-local-folder = []
+
+[tool.ruff.lint.isort.sections]
+"django" = ["django"]
+"pylib" = ["dateutil"]
+"webu" = ["webu", "faq"]
     
 [tool.coverage.run]
     omit = [
@@ -70,3 +60,8 @@
         "*/.tox/*", 
         "*/.migrations/*"
     ]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.16.10",
+]
