@@ -81,12 +81,8 @@ class WagtailParlerModel(TranslatableModel):
 
     def _serializable_translated_data(self) -> dict:
         translations = {}
-        i18n_meta = self._parler_meta.root
-        i18n_model = i18n_meta.model
-        for locale in self.get_available_languages():  # force to load translations
-            self.has_translation(locale)
-
-        for locale, translation in self._translations_cache[i18n_model].items():
+        for locale in self.get_available_languages():
+            translation = self._get_translated_model(locale, use_fallback=False, auto_create=False)
             if is_missing(translation):
                 continue
             # translation = self.get_translation(locale)
