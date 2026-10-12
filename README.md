@@ -4,7 +4,7 @@
 ![](https://img.shields.io/badge/python-3.9%20to%203.11-blue)
 ![](https://img.shields.io/badge/django-4.2%20to%205.2-blue)
 ![](https://img.shields.io/badge/wagtail-5.0%20to%207.0-blue)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Code style: ruff](https://img.shields.io/badge/-Ruff-D7FF64?style=flat-square&logo=ruff&logoColor=black)](https://github.com/astral-sh/ruff)
 ![](https://img.shields.io/badge/coverage-100%25-green)
 [![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
@@ -33,7 +33,7 @@ This app is tested to runs with:
 
 To ensure code quality and consistency:
 
-* Formatted with [black](https://pypi.org/project/black/)
+* Formatted with [ruff](https://pypi.org/project/ruff/)
 * Validated with [flake8](https://pypi.org/project/flake8/). 
 * Static types checked with [mypy](https://pypi.org/project/mypy/)
 * Tests coverage checked with [coverage](https://pypi.org/project/coverage/) (100% tested)
