@@ -14,7 +14,7 @@ class TranslationsFilterSet(WagtailFilterSet):
         label=_("À traduire"),
         method="filter_untranslated",
         choices=list(
-            (language["code"], language["translated_label"]) 
+            (language["code"], language["translated_label"])
             for language in settings.PARLER_LANGUAGES[None]
         ),
         widget=forms.CheckboxSelectMultiple,

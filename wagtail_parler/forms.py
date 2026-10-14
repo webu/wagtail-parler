@@ -200,7 +200,7 @@ def build_translations_form(
         "Meta": type("Meta", (WagtailAdminModelForm.Meta,), main_form_meta_attrs),
         "auto_parler_fields": set(),
     }
-    
+
     i18n_model = model._parler_meta.root_model  # pylint: disable=protected-access
     if fields_for_model_kwargs:
         fields_for_model_kwargs = deepcopy(fields_for_model_kwargs)
