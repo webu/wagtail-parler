@@ -12,6 +12,8 @@ if TYPE_CHECKING:
     from typing import Dict
     from typing import Tuple
 
+    from django.db.models import Manager
+
 
 class ToDelete(IsMissing):
     pass
@@ -20,7 +22,7 @@ class ToDelete(IsMissing):
 TO_DELETE = ToDelete()
 
 
-def is_cluster_manager(rel) -> bool:
+def is_cluster_manager(rel: Manager) -> bool:
     """
     Unfortunately, ModelCluster DeferringRelatedManager can not be imported, it is
     generated dynamically. So we test if we had a specific method from this manager
