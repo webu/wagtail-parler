@@ -705,9 +705,15 @@ class WagtailParlerSnippetsTests(WagtailParlerBaseTests, TestCase):
 
         jelly = Food.objects.get(pk=1)
         jelly.set_current_language("fr")
+        translation_from_fr = next(
+            (row for row in rev_from.content["translations"] if row["language_code"] == "fr"), None
+        )
+        translation_to_fr = next(
+            (row for row in rev_to.content["translations"] if row["language_code"] == "fr"), None
+        )
 
-        self.assertEqual(rev_from.content["translations"]["fr"]["name"], "Gelée")
-        self.assertEqual(rev_to.content["translations"]["fr"]["name"], "Gelée modifiée")
+        self.assertEqual(translation_from_fr["name"], "Gelée")
+        self.assertEqual(translation_to_fr["name"], "Gelée modifiée")
         self.assertEqual(jelly.name, "Gelée")  # but published objet should stay the same
         # because we only save the vegetarian field, not the translations
         self.assertEqual(jelly.vegetarian, False)
