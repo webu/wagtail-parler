@@ -1,5 +1,5 @@
 [version]
-current = "0.7.7"
+current = "0.7.8"
 
 # valid versions:
 # we use semver
