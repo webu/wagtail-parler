@@ -26,7 +26,7 @@ class TranslationsFilterSet(WagtailFilterSet):
         # empty_label="",
     )
 
-    def filter_untranslated(self, queryset: QuerySet, name: str, value: str) -> QuerySet:
+    def filter_untranslated(self, queryset: "QuerySet", name: str, value: str) -> "QuerySet":
         if not value:
             return queryset
         q = None
