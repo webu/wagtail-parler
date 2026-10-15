@@ -16,45 +16,45 @@ jobs:
     strategy:
       matrix:
         include:
-          - python: '3.9'
+          - python: "3.9"
             django: '"Django>=4.2,<4.3"'
             wagtail: '"wagtail>=5.0,<5.1" "wagtail-modeladmin>=1.0,<2.0"'
-            coverage: 'py3.9_django-4.2_wagtail-5.0'
+            coverage: "py3.9_django-4.2_wagtail-5.0"
             experimental: false
-          - python: '3.9'
+          - python: "3.9"
             django: '"Django>=4.2,<4.3"'
             wagtail: '"wagtail>=5.1,<5.2" "wagtail-modeladmin>=1.0,<2.0"'
-            coverage: 'py3.9_django-4.2_wagtail-5.1'
+            coverage: "py3.9_django-4.2_wagtail-5.1"
             experimental: false
-          - python: '3.11'
+          - python: "3.11"
             django: '"Django>=4.2,<4.3"'
             wagtail: '"wagtail>=5.1,<5.2" "wagtail-modeladmin>=1.0,<2.0"'
-            coverage: 'py3.11_django-4.2_wagtail-5.1'
+            coverage: "py3.11_django-4.2_wagtail-5.1"
             experimental: false
-          - python: '3.11'
+          - python: "3.11"
             django: '"Django>=4.2,<4.3"'
             wagtail: '"wagtail>=5.2,<5.3" "wagtail-modeladmin>=1.0,<2.0"'
-            coverage: 'py3.11_django-4.2_wagtail-5.2'
+            coverage: "py3.11_django-4.2_wagtail-5.2"
             experimental: false
-          - python: '3.11'
+          - python: "3.11"
             django: '"Django>=4.2,<4.3"'
             wagtail: '"wagtail>=6.3,<6.4" "wagtail-modeladmin>=2.0,<3.0"'
-            coverage: 'py3.11_django-4.2_wagtail-6.3'
+            coverage: "py3.11_django-4.2_wagtail-6.3"
             experimental: false
-          - python: '3.11'
+          - python: "3.11"
             django: '"Django>=5.2,<5.3"'
             wagtail: '"wagtail>=7.0,<7.1" "wagtail-modeladmin>=2.0,<3.0"'
-            coverage: 'py3.11_django-5.2_wagtail-7.0'
+            coverage: "py3.11_django-5.2_wagtail-7.0"
             experimental: false
-          - python: '3.11'
+          - python: "3.11"
             django: '"Django>=5.2,<5.3"'
             wagtail: '"wagtail>=7.1,<7.2" "wagtail-modeladmin>=2.0,<3.0"'
-            coverage: 'py3.11_django-5.2_wagtail-7.1'
+            coverage: "py3.11_django-5.2_wagtail-7.1"
             experimental: false
-          - python: '3.11'
+          - python: "3.11"
             django: '"Django>=5.2,<5.3"'
             wagtail: '"wagtail>=7.2,<7.3" "wagtail-modeladmin>=2.0,<3.0"'
-            coverage: 'py3.11_django-5.2_wagtail-7.2'
+            coverage: "py3.11_django-5.2_wagtail-7.2"
             experimental: false
           - python: "3.13"
             django: '"Django>=5.2,<5.3"'
@@ -102,7 +102,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Install dependencies
         run: |
