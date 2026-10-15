@@ -22,7 +22,7 @@ class ToDelete(IsMissing):
 TO_DELETE = ToDelete()
 
 
-def is_cluster_manager(rel: Manager) -> bool:
+def is_cluster_manager(rel: "Manager") -> bool:
     """
     Unfortunately, ModelCluster DeferringRelatedManager can not be imported, it is
     generated dynamically. So we test if we had a specific method from this manager
